@@ -1,0 +1,40 @@
+@import url(https://fonts.googleapis.com/css2?family=Inconsolata:wght@300&display=swap);
+
+body {
+    font-family: "Inconsolata", serif !important;
+    background-color: #f7f7f7;
+    background-image: url('./images/bg.png');
+    opacity: 0.94;
+}
+
+tbody {
+    vertical-align: middle !important;
+}
+
+.container-bordered {
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+
+.margin {
+    margin: 16px;
+}
+
+.footer {
+    bottom: 0;
+    width: 100%;
+    position: fixed !important;
+}
+
+.shadow {
+    box-shadow: 0 6px 10px -4px rgba(0, 0, 0, .15);
+}
+
+.ag-theme-quartz:focus-within {
+    --ag-range-selection-border-style: none;
+}
+
+.MuiInput-input {
+    vertical-align: sub;
+}
