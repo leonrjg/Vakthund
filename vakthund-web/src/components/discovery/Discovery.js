@@ -23,7 +23,7 @@ function Discovery() {
         let output = "";
 
         sse.onmessage = e => {
-            output += e.data + "\n";
+            output += JSON.parse(e.data) + "\n";
             setActionOutput(output);
         };
         sse.onerror = () => {
@@ -58,7 +58,7 @@ function Discovery() {
                         <Option value={action.id}>{action.title}</Option>
                     ))}
                 </Select>
-                <Card className={"h-100 bg-dark text-white-50 overflow-auto"}>
+                <Card className={"h-100 bg-dark text-white-50 overflow-auto display-flex flex-column-reverse"}>
                     <p style={{whiteSpace: "pre-line"}}>{actionOutput}</p>
                 </Card>
             </Col>

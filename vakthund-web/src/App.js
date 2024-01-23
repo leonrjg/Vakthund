@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import Devices from "./components/device/Devices";
 import Settings from "./components/Settings";
 import ManageDevice from "./components/device/ManageDevice";
-import NewAction from "./components/device/NewAction";
+import ManageAction from "./components/device/ManageAction";
 
 function App() {
     return (
@@ -32,7 +32,8 @@ function App() {
                             <Route path="/devices" element={<Devices/>}/>
                             <Route path="/devices/:id" element={<ManageDevice/>}/>
                             <Route path="/devices/new" element={<ManageDevice/>}/>
-                            <Route path="/devices/actions/new" element={<NewAction/>}/>
+                            <Route path="/devices/actions/:id" element={<ManageAction/>}/>
+                            <Route path="/devices/actions/new" element={<ManageAction/>}/>
                             <Route path="/settings" element={<Settings/>}/>
                             <Route path="/" element={<DiscoveryList/>}/>
                             <Route path="*" element={<ErrorNotFound/>}/>

@@ -17,9 +17,24 @@ router.post<{}, any>('/action', async (req, res) => {
   res.json(await actionService.postAction(req.body));
 });
 
+router.get<{}, any>('/action/:id', async (req, res) => {
+  // @ts-ignore
+  res.json(await actionService.getActionById(req.params.id));
+});
+
+router.put<{}, any>('/action/:id', async (req, res) => {
+  // @ts-ignore
+  res.json(await actionService.putAction(req.params.id, req.body));
+});
+
 router.get<{}, any>('/:id', async (req, res) => {
   // @ts-ignore
   res.json(await deviceService.getDeviceById(parseInt(req.params.id)));
+});
+
+router.put<{}, any>('/:id', async (req, res) => {
+  // @ts-ignore
+  res.json(await deviceService.editDevice(parseInt(req.params.id), req.body));
 });
 
 router.post<{}, any>('/', async (req, res) => {
