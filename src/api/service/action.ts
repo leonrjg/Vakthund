@@ -1,9 +1,10 @@
-import { Service, Inject } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { ActionRepository } from '../repository/action';
-import { spawn } from 'child_process';
+import { exec, spawn } from 'child_process';
 import express from 'express';
 import { DiscoveryService } from './discovery';
 import { ExecutionRepository } from '../repository/execution';
+import { EOL } from 'os';
 
 @Service()
 export class ActionService {
@@ -11,7 +12,7 @@ export class ActionService {
   actionRepo: ActionRepository;
 
   discoveryService: DiscoveryService;
-  
+
   executionRepo: ExecutionRepository;
 
   constructor(@Inject() actionRepo: ActionRepository,
@@ -48,45 +49,28 @@ export class ActionService {
       },
     );
 
-    res.write(`> ${cmd}\n`);
+    this.sendMsg(res, `> ${cmd}`);
 
-    const childProcess = spawn(cmd, { shell: true });
+    const childProcess = exec(cmd);
 
-    childProcess.stdout.on('data', (data) => {
+    childProcess.stdout?.on('data', (data) => {
       this.sendMsg(res, data.toString().trim());
     });
 
-    childProcess.stderr.on('data', (data) => {
+    childProcess.stderr?.on('data', (data) => {
       this.sendMsg(res, data.toString().trim());
     });
 
     childProcess.on('close', (code) => {
-      res.end();
       const success = code === 0;
 
-      // @ts-ignore
-      const tag = success ? action.on_success_tag : action.on_failure_tag;
-
-      if (tag) {
-        const tags = (discovery.tags || '').split(',').filter(Boolean);
-        const tagIndex = tags.indexOf(`!${tag}`);
-
-        if (tagIndex !== -1) {
-          tags.splice(tagIndex, 1);
-        }
-
-        tags.push(tag);
-      }
-      
       this.executionRepo.getModel().create({
         'action_id': id, 'discovery_id': targetId, 'execution_date': new Date(), 'success': success,
       });
+
+      res.end();
     });
   };
-
-  sendMsg(response: any, buffer: any) {
-    response.write(`data: ${buffer}\n\n`);
-  }
 
   getActionById = async (id: number) => {
     return this.actionRepo.getModel().findOne({
@@ -103,5 +87,16 @@ export class ActionService {
       'cmd': body.cmd,
     });
   };
+
+  putAction = async (id: number, body: any) => {
+    return this.actionRepo.getModel().findOne({ where: { id: id } }).then(action => {
+      action?.set(body);
+      action?.save();
+    });
+  };
+
+  private sendMsg(response: any, buffer: any) {
+    response.write(`data: ${JSON.stringify(buffer)}\n\n`);
+  }
 
 }

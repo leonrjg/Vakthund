@@ -6,10 +6,10 @@ import Radio from '@mui/joy/Radio';
 import RadioGroup from '@mui/joy/RadioGroup';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
-import {Button, Divider, Input} from "@mui/joy";
+import {Button, Divider, Input, List, ListItem, ListItemButton, ListItemDecorator} from "@mui/joy";
 import axios from "axios";
 import {DEVICE_URL, getDeviceURL, SETTINGS_URL} from "../../redux/types/Types";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {GetSearchEngineRadio} from "./utils/SearchEngineRadio";
 import {useEffectOnce} from "react-use";
 
@@ -37,7 +37,7 @@ function ManageDevice() {
     useEffectOnce(() => {
         if (params.id) {
             axios.get(getDeviceURL(params.id)).then(res => {
-                pushToState({nameValue: res.data.name, queryValue: res.data.queries[0]?.query, engineValue: res.data.queries[0]?.engine});
+                pushToState({nameValue: res.data.name, queryValue: res.data.queries[0]?.query, engineValue: res.data.queries[0]?.engine, actionsValue: res.data.actions});
             })
         }
     })
@@ -58,6 +58,24 @@ function ManageDevice() {
                             {GetSearchEngineRadio(e => pushToState({engineValue: e.target.value}), state.engineValue)}
                         </Sheet>
                     </FormControl>
+                    {params.id ?
+                        <FormControl>
+                            <Sheet variant="soft" sx={{p: 2, mt: 2}}>
+                                <FormLabel>Actions ({state.actionsValue?.length || 0})</FormLabel>
+                                <List aria-labelledby="decorated-list-demo">
+                                    {state.actionsValue?.map((action, index) => (
+                                        <Link to={"/devices/actions/" + action.id} style={{textDecoration: "none"}}>
+                                            <ListItem>
+                                                    <ListItemButton variant={"outlined"}>
+                                                            <ListItemDecorator>⌘</ListItemDecorator> {action.title}
+                                                    </ListItemButton>
+                                            </ListItem>
+                                        </Link>
+                                    ))}
+                                </List>
+                            </Sheet>
+                        </FormControl>
+                    : <></> }
                     <FormControl>
                         <Button className={"float-end mt-3"} onClick={async () => {
                             await sendDevice(params.id, {"name": state.nameValue, "query": state.queryValue, "engine": state.engineValue});

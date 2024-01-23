@@ -1,9 +1,10 @@
 import { Inject, Service } from 'typedi';
 import { DeviceRepository } from '../repository/device';
-import DeviceDTO, { toModel, toQueryModel } from '../../interfaces/DeviceDTO';
+import { toModel, toQueryModel } from '../../interfaces/DeviceDTO';
 import { DiscoveryRepository } from '../repository/discovery';
 import { QueryRepository } from '../repository/query';
 import { BaseRepository } from '../repository/base';
+import { ActionRepository } from '../repository/action';
 
 @Service()
 export class DeviceService {
@@ -15,14 +16,18 @@ export class DeviceService {
 
   queryRepo: QueryRepository;
   
+  actionRepo: ActionRepository;
+  
   constructor(@Inject() baseRepo: BaseRepository,
     @Inject() deviceRepo: DeviceRepository, 
     @Inject() discoveryRepo: DiscoveryRepository, 
-    @Inject() queryRepo: QueryRepository) {
+    @Inject() queryRepo: QueryRepository, 
+    @Inject() actionRepo: ActionRepository) {
     this.baseRepo = baseRepo;
     this.deviceRepo = deviceRepo;
     this.discoveryRepo = discoveryRepo;
     this.queryRepo = queryRepo;
+    this.actionRepo = actionRepo;
   }
 
   getDevices = async () => {
@@ -37,7 +42,23 @@ export class DeviceService {
   getDeviceById = async (id: number) => {
     const device = (await this.deviceRepo.getModel().findByPk(id))?.get();
     const queries = await this.queryRepo.getModel().findAll({ where: { device_id: device?.id } });
-    return { ...device, queries: queries };
+    const actions = await this.actionRepo.getModel().findAll({ where: { device_id: device?.id } });
+    return { ...device, queries: queries, actions: actions };
+  };
+
+  editDevice = async (id: number, body: any) => {
+    await this.baseRepo.conn.transaction(async (t) => {
+      await Promise.all([this.deviceRepo.getModel().findByPk(id, { transaction: t }).then(async device => {
+        device?.set(body);
+        await device?.save({ transaction: t });
+      }),
+
+      this.queryRepo.getModel().findOne({ where: { device_id: id }, transaction: t }).then(async query => {
+        query?.set(toQueryModel(id, body));
+        await query?.save({ transaction: t });
+      }),
+      ]);
+    });
   };
   
   newDevice = async (body: any) => {
