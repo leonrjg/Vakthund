@@ -4,8 +4,8 @@ import { ActionRepository } from '../repository/action';
 import { ExecutionRepository } from '../repository/execution';
 import DiscoveryDTO, { toModel } from '../../interfaces/DiscoveryDTO';
 import { Op } from 'sequelize';
-import Device from '../../models/device';
-import Action from '../../models/action';
+import Device from '../repository/models/device';
+import Action from '../repository/models/action';
 
 @Service()
 export class DiscoveryService {

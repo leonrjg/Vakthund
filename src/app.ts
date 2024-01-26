@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 
-import * as middlewares from './middleware';
+import * as middleware from './middleware';
 import api from './api';
 
 require('dotenv').config();
@@ -17,7 +17,9 @@ app.use(express.json());
 
 app.use('/api', api);
 
-app.use(middlewares.notFound);
-app.use(middlewares.errorHandler);
+app.use(middleware.notFound);
+app.use(middleware.errorHandler);
+
+app.disable('etag');
 
 export default app;

@@ -19,13 +19,13 @@ function Settings() {
 
     const dispatch = useDispatch();
 
-    useEffectOnce( () => {
+    useEffect( () => {
         dispatch(getSettings());
-    });
+    }, []);
 
     useEffect(() => {
         setSettingsJson(JSON.stringify(data, null, 2));
-    }, [])
+    }, [data])
 
     return (
         <div>

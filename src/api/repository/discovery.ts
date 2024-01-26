@@ -1,6 +1,6 @@
 import { BaseRepository } from './base';
 import { Service, Inject } from 'typedi';
-import Discovery, { DiscoveryMap } from '../../models/discovery';
+import Discovery, { DiscoveryMap } from './models/discovery';
 
 @Service()
 export class DiscoveryRepository {

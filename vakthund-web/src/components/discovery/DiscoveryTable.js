@@ -16,7 +16,7 @@ const DiscoveryTable = ({lst}) => {
     const [rowData, setRowData] = useState(lst);
 
     const [colDefs, setColDefs] = useState([
-        {field: "alias"},
+        {field: "last_updated"},
         {field: "url"},
         {
             field: "Device.name",
@@ -30,7 +30,7 @@ const DiscoveryTable = ({lst}) => {
             field: "tags",
             cellRenderer: params => {
                 return params.data.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Badge
-                    bg="secondary">{tag}</Badge></Link>)
+                    bg="secondary" className={"me-1"}>{tag}</Badge></Link>)
             }
         },
         {

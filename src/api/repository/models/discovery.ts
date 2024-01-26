@@ -48,7 +48,7 @@ export const DiscoveryMap = (sequelize: Sequelize) => {
     last_updated: {
       type: DataTypes.DATE,
     },
-    comment: {
+    full_data: {
       type: DataTypes.TEXT,
     },
     source: {

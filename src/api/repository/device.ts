@@ -1,6 +1,6 @@
 import { BaseRepository } from './base';
 import { Service, Inject } from 'typedi';
-import Device, { DeviceMap } from '../../models/device';
+import Device, { DeviceMap } from './models/device';
 
 @Service()
 export class DeviceRepository {

@@ -2,6 +2,7 @@
 
 # Vakthund
 config/vk-config.json
+vakthund.db
 
 # Logs
 logs
