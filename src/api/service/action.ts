@@ -1,10 +1,9 @@
 import { Inject, Service } from 'typedi';
 import { ActionRepository } from '../repository/action';
-import { exec, spawn } from 'child_process';
+import { exec } from 'child_process';
 import express from 'express';
 import { DiscoveryService } from './discovery';
 import { ExecutionRepository } from '../repository/execution';
-import { EOL } from 'os';
 
 @Service()
 export class ActionService {

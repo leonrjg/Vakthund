@@ -10,14 +10,14 @@ export default interface DiscoveryDTO {
 
 export function toModel(discovery: any): {
   ip: string;
-  comment?: string;
+  full_data?: string;
   source: string;
   device_id: number;
   url: string;
   tags?: string
 } {
   return {
-    comment: discovery.comment,
+    full_data: discovery.full_data,
     device_id: discovery.device_id,
     ip: discovery.ip,
     source: discovery.source,

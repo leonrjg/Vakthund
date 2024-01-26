@@ -44,8 +44,6 @@ function Discovery() {
                 <Card className={"h-100 bg-light shadow"}>
                     <FormLabel>IP</FormLabel> {selector.details?.ip}<br/>
                     <FormLabel>URL</FormLabel> {selector.details?.url}<br/>
-                    <FormLabel>Alias</FormLabel> <Input className={"d-inline w-auto"} placeholder={"Type alias and [ENTER]"}
-                                                        defaultValue={selector.details?.alias}/>
                     <FormLabel>Device</FormLabel> <Link to={`/?query=${selector.details?.Device?.name}`}><Badge bg="primary">{selector.details?.Device?.name}</Badge></Link>
                     <FormLabel>Tags</FormLabel> {selector.details?.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Badge
                     bg="secondary">{tag}</Badge></Link>)}<br/>
@@ -65,7 +63,7 @@ function Discovery() {
             <Col sm={3} className={"mb-1"} style={{height: "500px"}}>
                 <Card className={"bg-light shadow"} style={{height: "500px"}}>
                     <FormLabel>Full info</FormLabel>
-                    <TextareaAutosize style={{overflow: "auto"}} value={JSON.stringify(JSON.parse(selector.details?.comment || '{}'), null, 4)}></TextareaAutosize>
+                    <TextareaAutosize style={{overflow: "auto"}} value={JSON.stringify(JSON.parse(selector.details?.full_data || '{}'), null, 4)}></TextareaAutosize>
                 </Card>
             </Col>
             <Row className="m-3 justify-content-center">

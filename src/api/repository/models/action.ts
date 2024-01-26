@@ -8,11 +8,7 @@ export default class Action extends Model {
 
   declare cmd: string;
 
-  declare successRegex: string;
-
-  declare onSuccessTag: string;
-
-  declare onFailureTag: string;
+  declare executeOnDiscovery: boolean;
 
 }
 export const ActionMap = (sequelize: Sequelize) => {
@@ -34,14 +30,8 @@ export const ActionMap = (sequelize: Sequelize) => {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    success_regex: {
-      type: DataTypes.STRING(100),
-    },
-    on_success_tag: {
-      type: DataTypes.STRING,
-    },
-    on_failure_tag: {
-      type: DataTypes.STRING,
+    execute_on_discovery: {
+      type: DataTypes.BOOLEAN,
     },
   }, {
     sequelize,

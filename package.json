@@ -27,6 +27,7 @@
     "morgan": "^1.10.0",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.34.0",
+    "sqlite3": "^5.1.7",
     "typedi": "^0.10.0"
   },
   "devDependencies": {

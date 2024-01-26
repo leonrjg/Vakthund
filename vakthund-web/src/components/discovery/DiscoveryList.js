@@ -4,27 +4,27 @@ import {getAllDiscoveries} from "../../redux/actions/Actions";
 import DiscoveryTable from "./DiscoveryTable";
 import {Skeleton} from "@mui/joy";
 
-function DiscoveryList({total_pages}) {
-    const [devicesData, setdevicesData] = useState([]);
+function DiscoveryList() {
+    const [discoveryList, setDiscoveryList] = useState([]);
     const Dispatch = useDispatch();
 
     useEffect(() => {
         Dispatch(getAllDiscoveries());
     }, []);
 
-    const devicesDatas = (useSelector((state) => state.discoveries) || []);
+    const data = useSelector((state) => state.discoveries);
 
     useEffect(() => {
-        setdevicesData(devicesDatas);
-    }, [devicesDatas]);
+        setDiscoveryList(data);
+    }, [data]);
 
     return (
         <>
-            {devicesData.length > 0 ? (
-                <DiscoveryTable lst={devicesData}/>
+            {discoveryList?.length > 0 ? (
+                <DiscoveryTable lst={discoveryList}/>
             ) : (
                 <>
-                    <h2 className="text-center mt-4">Loading...</h2>
+                    <DiscoveryTable lst={[]}/>
                 </>
             )}
         </>
