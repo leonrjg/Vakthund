@@ -1,5 +1,4 @@
 import json
-import os
 import traceback
 from datetime import datetime
 from typing import List
@@ -40,31 +39,37 @@ def insert(items: List[Item], device_id: int) -> None:
             # send action
             continue
 
+def get_engine_config(engine: str) -> tuple:
+    with open(CONFIG_FILE, 'r') as f:
+        config = json.load(f)
+        api_key = config['engines'][engine]['api_key']
+        tag_attributes = config['engines'][engine].get('tag_attributes') or []
+        return api_key, tag_attributes
 
-if __name__ == '__main__':
+def run_engine():
     searches = Query.select()
     for s in searches:
         print(f"Searching: {s.query} @ {s.engine}")
-        engineName = s.engine.lower()
+        engine_name = s.engine.lower()
         try:
-            with open(CONFIG_FILE, 'r') as f:
-                config = json.load(f)
-                api_key = config['engines'][engineName]['api_key']
-                tag_attributes = config['engines'][engineName].get('tag_attributes') or []
+            api_key, tag_attributes = get_engine_config(engine_name)
         except KeyError:
             print(f"API key is missing from config file {CONFIG_FILE} or the file is malformed")
             continue
 
         try:
-            engine = getattr(engines, f"_{engineName}")
+            engine = getattr(engines, f"_{engine_name}")
         except AttributeError:
-            print(f"Engine {engineName} not implemented: {traceback.format_exc()}")
+            print(f"Engine {engine_name} not implemented: {traceback.format_exc()}")
             continue
 
         try:
             results = engine.search(api_key, s.query, tag_attributes)
-        except Exception as e:
+        except Exception:
             print(f"Query {s.query} failed: {traceback.format_exc()}")
             continue
 
         insert(results, s.device_id)
+
+if __name__ == '__main__':
+    run_engine()
