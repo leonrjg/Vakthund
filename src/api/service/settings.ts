@@ -1,20 +1,19 @@
-import { Service, Inject } from 'typedi';
-import { ActionRepository } from '../repository/action';
-import { spawn } from 'child_process';
-import express from 'express';
-import { DiscoveryService } from './discovery';
+import { Service } from 'typedi';
 import path from 'path';
 import * as fs from 'fs';
 
 @Service()
 export class SettingsService {
+  
+  configSample = path.join(__dirname, '../../../config/vk-config-sample.json');
 
-  filePath = path.join(__dirname, '../../../config/vk-config.json');
+  config = path.join(__dirname, '../../../config/vk-config.json');
 
   getSettings = async () => {
     try {
-      const data = fs.readFileSync(this.filePath, 'utf-8');
-      return JSON.parse(data);
+      const structure = fs.readFileSync(this.configSample, 'utf-8');
+      const userData = fs.readFileSync(this.config, 'utf-8');
+      return Object.assign(JSON.parse(structure), JSON.parse(userData));
     } catch (error) {
       return null;
     }
@@ -22,7 +21,7 @@ export class SettingsService {
 
   writeSettings = async (body: any) => {
     try {
-      fs.writeFileSync(this.filePath, JSON.stringify(body), 'utf-8');
+      fs.writeFileSync(this.config, JSON.stringify(body), 'utf-8');
       return true;
     } catch (error) {
       return false;

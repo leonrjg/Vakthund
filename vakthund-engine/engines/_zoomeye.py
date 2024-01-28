@@ -10,7 +10,7 @@ ENGINE_NAME = "zoomeye"
 
 
 def search(api_key: str, query: str, tag_attributes: List[str]) -> list[Item]:
-    if os.environ.get('USE_MOCKS'):
+    if os.environ.get('vk_use_mocks'):
         results = get_mock(ENGINE_NAME)
     else:
         zm = ZoomEye(api_key=api_key)

@@ -12,7 +12,7 @@ ENGINE_NAME = "shodan"
 
 
 def search(api_key: str, query: str, tag_attributes: List[str]) -> list[Item]:
-    if os.environ.get('USE_MOCKS'):
+    if os.environ.get('vk_use_mocks'):
         results = get_mock(ENGINE_NAME)
     else:
         api = shodan.Shodan(api_key)
