@@ -73,7 +73,7 @@ function ManageDevice() {
                                 <List aria-labelledby="decorated-list-demo">
                                     {state.actionsValue?.map((action, index) => (
                                         <Link to={"/devices/actions/" + action.id} style={{textDecoration: "none"}}>
-                                            <ListItem>
+                                            <ListItem className={"mb-1"}>
                                                     <ListItemButton variant={"outlined"}>
                                                             <ListItemDecorator>⌘</ListItemDecorator> {action.title}
                                                     </ListItemButton>

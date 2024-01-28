@@ -39,6 +39,8 @@ export class BaseRepository {
       Discovery.belongsTo(Device, { foreignKey: 'device_id', onDelete: 'CASCADE' });
 
       ActionMap(this.conn);
+      Action.belongsTo(Device, { foreignKey: 'device_id', onDelete: 'CASCADE' });
+
       ExecutionMap(this.conn);
       Execution.belongsTo(Action, { foreignKey: 'action_id', onDelete: 'CASCADE' });
 

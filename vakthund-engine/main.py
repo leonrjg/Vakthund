@@ -3,11 +3,14 @@ import traceback
 from datetime import datetime
 from typing import List
 
+import requests
+
 import engines
-from db import Discovery, Query
+from db import Discovery, Query, Action
 from entities.item import Item
 from util import get_project_dir
 
+VK_BACKEND_URL = 'http://localhost:18001/api'
 CONFIG_FILE = f'{get_project_dir()}../config/vk-config.json'
 MAX_ACTIONS_PER_QUERY = 3
 
@@ -20,7 +23,7 @@ def insert(items: List[Item], device_id: int) -> None:
             status = "Updating" if existing_discovery else "Inserting"
             print(f"{status} discovery ({r.url})")
             tags = ','.join(r.tags)
-            Discovery.insert(url=r.url,
+            new_discovery = Discovery.insert(url=r.url,
                              ip=r.ip,
                              device_id=device_id,
                              tags=tags,
@@ -36,8 +39,13 @@ def insert(items: List[Item], device_id: int) -> None:
             continue
 
         if not existing_discovery and count < MAX_ACTIONS_PER_QUERY:
-            # send action
-            continue
+            device_actions = Action.select().where(Action.device_id == device_id, Action.execute_on_discovery == True)
+            for action in device_actions:
+                try:
+                    requests.get(f'{VK_BACKEND_URL}/discovery/{new_discovery}/action/{action.id}', timeout=10).raise_for_status()
+                    print(f"Executed action {action.id} '{action.title}' for device {device_id}")
+                except requests.exceptions.RequestException:
+                    print(f"Failed to execute action {action.id} '{action.title}' for device {device_id}: {traceback.format_exc()}")
 
 def get_engine_config(engine: str) -> tuple:
     with open(CONFIG_FILE, 'r') as f:

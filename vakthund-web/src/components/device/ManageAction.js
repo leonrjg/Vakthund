@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import FormControl from '@mui/joy/FormControl';
 import Radio from '@mui/joy/Radio';
 import RadioGroup from '@mui/joy/RadioGroup';
-import {Alert, Button, Input, List, ListItem, ListItemDecorator, Option, Select, Textarea} from "@mui/joy";
+import {Alert, Button, Checkbox, Input, List, ListItem, ListItemDecorator, Option, Select, Textarea} from "@mui/joy";
 import {Mouse, Troubleshoot} from "@mui/icons-material";
 import FormLabel from "@mui/joy/FormLabel";
 import Sheet from "@mui/joy/Sheet";
@@ -37,7 +37,7 @@ function ManageAction() {
         dispatch(getDevices());
         if (params.id) {
             axios.get(getActionURL(params.id)).then(res => {
-                pushToState({titleValue: res.data.title, deviceValue: res.data.device_id, scriptValue: res.data.cmd});
+                pushToState({titleValue: res.data.title, deviceValue: res.data.device_id, scriptValue: res.data.cmd, executeOnDiscoveryValue: res.data.execute_on_discovery});
             })
         }
     })
@@ -56,7 +56,7 @@ function ManageAction() {
                             e.stopPropagation();
                             await sendAction(params.id, {
                                 "title": state.titleValue,
-                                "frequency": state.frequency,
+                                "execute_on_discovery": state.executeOnDiscoveryValue,
                                 "device_id": state.deviceValue,
                                 "cmd": state.scriptValue
                             });
@@ -74,13 +74,12 @@ function ManageAction() {
                         </Select>
                     </FormControl>
                     <FormControl>
-                        <RadioGroup defaultValue="On demand">
-                            <FormLabel>Execution frequency</FormLabel>
+                        <RadioGroup>
+                            <FormLabel>Execution schedule</FormLabel>
                             <List sx={{minWidth: 240, '--List-gap': '0.5rem', '--ListItem-paddingY': '1rem', '--ListItem-radius': '8px', '--ListItemDecorator-size': '32px',}}>
-                                {['On discovery', 'On demand'].map((item, index) => (
-                                    <ListItem variant="outlined" key={item} sx={{boxShadow: 'sm'}}>
-                                        <ListItemDecorator>{[<Troubleshoot/>, <Mouse/>][index]}</ListItemDecorator>
-                                        <Radio required overlay onChange={ e => pushToState({frequency: e.target.value}) } value={item} label={item} slotProps={{
+                                    <ListItem variant="outlined" sx={{boxShadow: 'sm'}}>
+                                        <ListItemDecorator><Troubleshoot/></ListItemDecorator>
+                                        <Checkbox checked={!!state.executeOnDiscoveryValue} overlay onChange={e => pushToState({executeOnDiscoveryValue: !state.executeOnDiscoveryValue}) } label={"On discovery"} slotProps={{
                                             action: ({checked}) => ({
                                                 sx: (theme) => ({...(checked && {inset: -1, border: '2px solid', borderColor: theme.vars.palette.primary[500],}),
                                                 }),
@@ -88,7 +87,6 @@ function ManageAction() {
                                         }}
                                         />
                                     </ListItem>
-                                ))}
                             </List>
                         </RadioGroup>
                     </FormControl>
