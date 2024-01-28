@@ -3,7 +3,7 @@ import React from "react";
 import timeout from "../Utils";
 
 const ping = async (url) => {
-    return await timeout(5000, fetch(url, {mode: "no-cors", referrerPolicy: "no-referrer"}))
+    return await timeout(3000, fetch(url, {mode: "no-cors", referrerPolicy: "no-referrer"}))
         .then((response) => {
             return !!response;
         })

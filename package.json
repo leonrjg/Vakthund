@@ -5,6 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "start-server": "pm2 start dist/index.js",
+    "start-server-sync": "pm2 --no-daemon start dist/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
@@ -23,8 +25,8 @@
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
-    "mariadb": "^3.2.2",
     "morgan": "^1.10.0",
+    "pm2": "^5.3.1",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.34.0",
     "sqlite3": "^5.1.7",
@@ -45,11 +47,10 @@
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-import": "^2.27.5",
     "jest": "^29.5.0",
-    "mysql2": "^3.6.3",
+    "jest-mock-extended": "^3.0.5",
     "nodemon": "^2.0.22",
     "react-bootstrap": "^2.9.1",
-    "supertest": "^6.3.3",
-    "ts-jest": "^29.1.0",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.1",
     "typescript": "<5.1.0"
   }
