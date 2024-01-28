@@ -50,11 +50,24 @@ function ManageAction() {
             <h2 className={"d-inline"}>Devices -> {params.id ? `Edit action ${state.titleValue}` : "New action"}</h2>
             <div className={"card shadow my-3"}>
                 <div className={"card-body"}>
+                    <form onSubmit={async (e) => {
+                        if (e.target.checkValidity()) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            await sendAction(params.id, {
+                                "title": state.titleValue,
+                                "frequency": state.frequency,
+                                "device_id": state.deviceValue,
+                                "cmd": state.scriptValue
+                            });
+                            navigate(`/devices/${state.deviceValue}`)
+                        }
+                    }}>
                     <FormControl>
-                        <Input value={state.titleValue} onChange={ e => pushToState({titleValue: e.target.value}) } placeholder="Action title" sx={{mb: 1}} size={"lg"}/>
+                        <Input required value={state.titleValue} onChange={ e => pushToState({titleValue: e.target.value}) } placeholder="Action title" sx={{mb: 1}} size={"lg"}/>
                     </FormControl>
                     <FormControl>
-                        <Select value={state.deviceValue} onChange={ (_, value) => pushToState({deviceValue: value}) } placeholder="Select a target device" size="lg" sx={{mb: 1}} variant="outlined">
+                        <Select required value={state.deviceValue} onChange={ (_, value) => pushToState({deviceValue: value}) } placeholder="Select a target device" size="lg" sx={{mb: 1}} variant="outlined">
                             {
                                 devices ? devices.map(device => <Option key={device.id} value={device.id} label={device.name}>{device.name}</Option>) : <></>
                             }
@@ -67,7 +80,7 @@ function ManageAction() {
                                 {['On discovery', 'On demand'].map((item, index) => (
                                     <ListItem variant="outlined" key={item} sx={{boxShadow: 'sm'}}>
                                         <ListItemDecorator>{[<Troubleshoot/>, <Mouse/>][index]}</ListItemDecorator>
-                                        <Radio overlay onChange={ e => pushToState({frequency: e.target.value}) } value={item} label={item} slotProps={{
+                                        <Radio required overlay onChange={ e => pushToState({frequency: e.target.value}) } value={item} label={item} slotProps={{
                                             action: ({checked}) => ({
                                                 sx: (theme) => ({...(checked && {inset: -1, border: '2px solid', borderColor: theme.vars.palette.primary[500],}),
                                                 }),
@@ -84,14 +97,12 @@ function ManageAction() {
                         The following variables are available: <strong>%url, %ip</strong>
                     </Alert>
                     <FormControl>
-                        <Textarea minRows={5} value={state.scriptValue} onChange={ e => pushToState({scriptValue: e.target.value}) } placeholder="Enter a shell command" size="lg" variant="outlined"/>
+                        <Textarea required minRows={5} value={state.scriptValue} onChange={ e => pushToState({scriptValue: e.target.value}) } placeholder="Enter a shell command" size="lg" variant="outlined"/>
                     </FormControl>
                     <FormControl>
-                        <Button className={"float-end mt-3"} onClick={async () => {
-                            await sendAction(params.id, {"title": state.titleValue, "frequency": state.frequency, "device_id": state.deviceValue, "cmd": state.scriptValue});
-                            navigate(`/devices/${state.deviceValue}`)
-                        }}>{params.id ? "Update" : "Create"}</Button>
+                        <Button type="submit" className={"float-end mt-3"}>{params.id ? "Update" : "Create"}</Button>
                     </FormControl>
+                    </form>
                 </div>
             </div>
         </div>

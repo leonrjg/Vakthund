@@ -10,13 +10,18 @@ export class SettingsService {
   config = path.join(__dirname, '../../../config/vk-config.json');
 
   getSettings = async () => {
+    const structure = fs.readFileSync(this.configSample, 'utf-8');
+
+    let userData;
     try {
-      const structure = fs.readFileSync(this.configSample, 'utf-8');
-      const userData = fs.readFileSync(this.config, 'utf-8');
-      return Object.assign(JSON.parse(structure), JSON.parse(userData));
+      userData = fs.readFileSync(this.config, 'utf-8');
     } catch (error) {
-      return null;
+      userData = '{}';
     }
+
+    return Object.assign(JSON.parse(structure), JSON.parse(userData));
+
+
   };
 
   writeSettings = async (body: any) => {
