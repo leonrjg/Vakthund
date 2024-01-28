@@ -33,7 +33,6 @@ export class ActionService {
       throw new Error('Discovery not found');
     }
 
-    // @ts-ignore
     const cmd = action.cmd.replace(
       /%url|%ip/g,
       (match: any) => {

@@ -17,7 +17,6 @@ export class BaseRepository {
       if (!env.db_type || env.db_type === 'sqlite') {
         this.conn = new Sequelize({
           dialect: 'sqlite',
-          // @ts-ignore
           storage: path.join(path.resolve(__dirname, '../../..'), 'vakthund.db'),
         });
       } else {
