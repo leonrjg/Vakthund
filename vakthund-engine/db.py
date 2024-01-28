@@ -1,5 +1,5 @@
 import os
-from peewee import MySQLDatabase, PostgresqlDatabase, SqliteDatabase, TextField, DateTimeField, Model
+from peewee import MySQLDatabase, PostgresqlDatabase, SqliteDatabase, TextField, DateTimeField, Model, BooleanField
 
 from util import get_project_dir
 
@@ -39,4 +39,15 @@ class Query(Model):
         table_name = 'vakthund_queries'
 
 
-db.create_tables([Discovery, Query])
+class Action(Model):
+    device_id = TextField()
+    title = TextField(null=False)
+    cmd = TextField(null=False)
+    execute_on_discovery = BooleanField()
+
+    class Meta:
+        database = db
+        table_name = 'vakthund_actions'
+
+
+# db.create_tables([Discovery, Query, Action])

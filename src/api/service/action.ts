@@ -50,7 +50,7 @@ export class ActionService {
 
     this.sendMsg(res, `> ${cmd}`);
 
-    const childProcess = exec(cmd);
+    const childProcess = exec(cmd, { windowsHide: true });
 
     childProcess.stdout?.on('data', (data) => {
       this.sendMsg(res, data.toString().trim());
@@ -84,6 +84,7 @@ export class ActionService {
       'device_id': body.device_id,
       'title': body.title,
       'cmd': body.cmd,
+      'execute_on_discovery': !!body.execute_on_discovery,
     });
   };
 
