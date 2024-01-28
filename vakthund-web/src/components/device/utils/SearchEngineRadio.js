@@ -15,6 +15,7 @@ export function GetSearchEngineRadio(onChangeRadioCallback, defaultEngine) {
                     <Sheet component="label" key={engine} variant="outlined"
                         sx={{p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: 'sm', borderRadius: 'md',}}>
                         <Radio
+                            required
                             value={`${engine}`}
                             checked={defaultEngine === engine}
                             onChange={ onChangeRadioCallback }

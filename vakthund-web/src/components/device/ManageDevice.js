@@ -47,14 +47,22 @@ function ManageDevice() {
             <h2 className={"d-inline"}>Devices -> {params.id ? `Edit device ${state.nameValue}` : "New device"}</h2>
             <div className={"card shadow my-3"}>
                 <div className={"card-body"}>
+                    <form onSubmit={async (e) => {
+                        if (e.target.checkValidity()) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            await sendDevice(params.id, {"name": state.nameValue, "query": state.queryValue, "engine": state.engineValue});
+                            navigate('/devices');
+                        }
+                    }}>
                     <FormControl>
-                        <Input value={state.nameValue} onChange={ e => pushToState({nameValue: e.target.value}) } placeholder="Device name" sx={{mb: 2}}/>
+                        <Input required value={state.nameValue} onChange={ e => pushToState({nameValue: e.target.value}) } placeholder="Device name" sx={{mb: 2}}/>
                     </FormControl>
                     <Divider/>
                     <FormControl>
                         <Sheet variant="soft" sx={{p: 2}}>
                             <FormLabel>Query</FormLabel>
-                            <Input value={state.queryValue} onChange={ e => pushToState({queryValue: e.target.value}) } placeholder="Query" sx={{mb: 2}}/>
+                            <Input required value={state.queryValue} onChange={ e => pushToState({queryValue: e.target.value}) } placeholder="Query" sx={{mb: 2}}/>
                             {GetSearchEngineRadio(e => pushToState({engineValue: e.target.value}), state.engineValue)}
                         </Sheet>
                     </FormControl>
@@ -77,11 +85,9 @@ function ManageDevice() {
                         </FormControl>
                     : <></> }
                     <FormControl>
-                        <Button className={"float-end mt-3"} onClick={async () => {
-                            await sendDevice(params.id, {"name": state.nameValue, "query": state.queryValue, "engine": state.engineValue});
-                            navigate('/devices')
-                        }}>{params.id ? "Update" : "Create"}</Button>
+                        <Button type="submit" className={"float-end mt-3"}>{params.id ? "Update" : "Create"}</Button>
                     </FormControl>
+                    </form>
                 </div>
             </div>
         </div>
