@@ -20,6 +20,7 @@ Self-hosted web dashboard for security researchers to manage and track IoT devic
 🟢 See the full result from the search engine on the web interface
 
 ## Setup
+Requirements: Node.js 18+, Python 3
 ```sh
 git clone https://github.com/leonrjg/Vakthund.git
 cd Vakthund
