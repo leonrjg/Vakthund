@@ -3,13 +3,17 @@
 Self-hosted web dashboard for security researchers to manage and track IoT devices obtained from public sources such as Shodan or ZoomEye.
 
 ## 🟍 Features:
-🟢 Periodically save devices that match certain criteria on the search engines
+🟢 Periodically save hosts that match certain criteria on the search engines
 
-🟢 Configure and execute actions targeting certain devices
+🟢 Configure and execute actions targeting certain hosts
 
 🟢 Choose what search engine to use for each device
 
+🟢 Filter hosts by tag, device type or any related value
+
 🟢 Confirm whether a host is online directly on the web interface
+
+🟢 See the full result from the search engine on the web interface
 
 ## Setup
 ```sh
