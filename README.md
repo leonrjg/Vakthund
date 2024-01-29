@@ -2,6 +2,10 @@
 
 Self-hosted web dashboard for security researchers to manage and track IoT devices obtained from public sources such as Shodan or ZoomEye.
 
+![vk example](https://github.com/leonrjg/Vakthund/assets/5253770/63d45f38-7a39-43b0-8003-2a1e91535bed)
+
+
+
 ## 🟍 Features:
 🟢 Periodically save hosts that match certain criteria on the search engines
 
