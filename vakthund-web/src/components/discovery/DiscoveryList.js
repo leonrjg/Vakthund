@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllDiscoveries} from "../../redux/actions/Actions";
 import DiscoveryTable from "./DiscoveryTable";
-import {Skeleton} from "@mui/joy";
 
 function DiscoveryList() {
     const [discoveryList, setDiscoveryList] = useState([]);

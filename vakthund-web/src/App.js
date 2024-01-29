@@ -25,7 +25,8 @@ function App() {
                 </Container>
             </Navbar>
             <div style={{margin: "30px"}}>
-                <Container fluid className="mt-3 bg-body container-bordered card shadow" style={{marginBottom: "100px"}}>
+                <Container fluid className="mt-3 bg-body container-bordered card shadow"
+                           style={{marginBottom: "100px"}}>
                     <div className="margin">
                         <Routes>
                             <Route path="/discovery/:id" element={<Discovery/>}/>
