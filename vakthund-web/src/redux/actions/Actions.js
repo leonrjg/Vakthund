@@ -1,13 +1,14 @@
 import axios from "axios";
 import {
-    ALL_DISCOVERIES, DEVICE_ALL,
+    ALL_DISCOVERIES,
+    DEVICE_ALL,
     DEVICE_ALL_URL,
-    DEVICE_DETAIL,
     DISCOVERY_ALL_URL,
     DISCOVERY_DETAIL,
-    DISCOVERY_DETAIL_URL, SETTINGS, SETTINGS_URL,
+    DISCOVERY_DETAIL_URL,
+    SETTINGS,
+    SETTINGS_URL,
 } from "../types/Types";
-import {useState} from "react";
 
 export const getAllDiscoveries = () => {
     return async (dispatch) => {

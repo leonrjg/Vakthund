@@ -13,18 +13,25 @@ export function GetSearchEngineRadio(onChangeRadioCallback, defaultEngine) {
             <RadioGroup overlay name="engine" defaultValue={defaultEngine} orientation="horizontal" sx={{gap: 2}}>
                 {["Shodan", "ZoomEye"].map((engine) => (
                     <Sheet component="label" key={engine} variant="outlined"
-                        sx={{p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: 'sm', borderRadius: 'md',}}>
+                           sx={{
+                               p: 2,
+                               display: 'flex',
+                               flexDirection: 'column',
+                               alignItems: 'center',
+                               boxShadow: 'sm',
+                               borderRadius: 'md',
+                           }}>
                         <Radio
                             required
                             value={`${engine}`}
                             checked={defaultEngine === engine}
-                            onChange={ onChangeRadioCallback }
+                            onChange={onChangeRadioCallback}
                             variant="soft"
                             sx={{
                                 mb: 2,
                             }}
                         />
-                        <Avatar alt={`${engine}`} />
+                        <Avatar alt={`${engine}`}/>
                         <Typography level="body-sm" sx={{mt: 1}}>{engine}</Typography>
                     </Sheet>
                 ))}

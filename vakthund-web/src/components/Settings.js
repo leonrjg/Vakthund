@@ -4,7 +4,6 @@ import {getSettings} from "../redux/actions/Actions";
 import {Alert, Button, Textarea} from "@mui/joy";
 import {SETTINGS_URL} from "../redux/types/Types";
 import axios from "axios";
-import {useEffectOnce} from "react-use";
 
 async function postSettings(data) {
     return (await axios.post(SETTINGS_URL, data, {headers: {'Content-Type': 'application/json'}})).status === 200;
@@ -19,7 +18,7 @@ function Settings() {
 
     const dispatch = useDispatch();
 
-    useEffect( () => {
+    useEffect(() => {
         dispatch(getSettings());
     }, []);
 
@@ -32,8 +31,10 @@ function Settings() {
             <h2 className={"d-inline"}>Settings</h2>
             <div className={"card shadow my-3"}>
                 <div className={"card-body"}>
-                    {isSubmitted ? <Alert color="success" variant="soft" className={"mb-1"}>Saved settings</Alert> : <></> }
-                    <Textarea minRows={5} value={settingsJson} onChange={e => setSettingsJson(e.target.value)} size="lg" />
+                    {isSubmitted ?
+                        <Alert color="success" variant="soft" className={"mb-1"}>Saved settings</Alert> : <></>}
+                    <Textarea minRows={5} value={settingsJson} onChange={e => setSettingsJson(e.target.value)}
+                              size="lg"/>
                     <Button className={"float-end mt-3"} onClick={async () => {
                         setSubmitted(await postSettings(settingsJson))
                         dispatch(getSettings());

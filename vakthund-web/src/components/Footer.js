@@ -9,7 +9,8 @@ const Footer = () => (
         <Container fluid={true}>
             <Row>
                 <Col>
-                    <a href={"https://github.com/leonrjg/Vakthund"} target="_blank" style={{textDecoration: "none", color: "white"}} rel="noreferrer">
+                    <a href={"https://github.com/leonrjg/Vakthund"} target="_blank"
+                       style={{textDecoration: "none", color: "white"}} rel="noreferrer">
                         <StarBorder/> Star on GitHub
                     </a>
                 </Col>

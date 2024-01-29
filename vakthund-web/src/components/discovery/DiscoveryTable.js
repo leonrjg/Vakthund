@@ -78,8 +78,8 @@ const DiscoveryTable = ({lst}) => {
     }, [getQuery()]);
 
     return (
-        <div className="example-wrapper">
-            <div className="example-header mb-1 w-100">
+        <div>
+            <div className="mb-1 w-100">
                 <Input size={"md"} className={"d-inline-block"} sx={{"width": "256"}}
                        id="filter-text-box"
                        autoComplete={"off"}

@@ -8,6 +8,7 @@ export const DISCOVERY_DETAIL_URL = (id) =>
 export const DEVICE_ALL = "device_all";
 export const SETTINGS = "settings";
 export const DEVICE_URL = `${BACKEND_URL_PREFIX}/api/device`;
+
 export function getDeviceURL(id) {
     return `${DEVICE_URL}/${id}`;
 }
@@ -15,9 +16,11 @@ export function getDeviceURL(id) {
 export function getActionURL(id) {
     return `${ACTION_URL}/${id}`;
 }
+
 export const DEVICE_ALL_URL = DEVICE_URL + `/all`;
 export const SETTINGS_URL = `${BACKEND_URL_PREFIX}/api/settings`;
 export const ACTION_URL = `${BACKEND_URL_PREFIX}/api/device/action`;
+
 export function getActionExecuteURL(discoveryId, actionId) {
     return `${BACKEND_URL_PREFIX}/api/discovery/${discoveryId}/action/${actionId}`;
 }
