@@ -1,7 +1,7 @@
 export const ALL_DISCOVERIES = "ALLdeviceS";
 export const DEVICE_DETAIL = "device_DETAIL";
 export const DISCOVERY_DETAIL = "discovery_DETAIL";
-export const BACKEND_URL_PREFIX = "http://localhost:18001"
+export const BACKEND_URL_PREFIX = `http://${window.location.hostname || 'localhost'}:18001`;
 export const DISCOVERY_ALL_URL = `${BACKEND_URL_PREFIX}/api/discovery/all`;
 export const DISCOVERY_DETAIL_URL = (id) =>
     `${BACKEND_URL_PREFIX}/api/discovery/${id}`;
