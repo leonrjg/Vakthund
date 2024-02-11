@@ -64,7 +64,7 @@ If the app is not working, the following commands might help.
     npm run start-client-sync
     
 # Example setup on a Debian container
-    apt update && apt install build-essential git python3 python3-pip python-is-python3 npm --no-install-recommends -y && cd Vakthund && python -m pip install --break-system-packages -r vakthund-engine/requirements.txt && npm install && npm run build && npm run start-server && cd vakthund-web && npm install && npm run build && npm run start-client
+    apt update && apt install build-essential git python3 python3-pip python-is-python3 npm --no-install-recommends -y && git clone https://github.com/leonrjg/Vakthund.git && cd Vakthund && python -m pip install --break-system-packages -r vakthund-engine/requirements.txt && npm install && npm run build && npm run start-server && cd vakthund-web && npm install && npm run build && npm run start-client
 ```
 
 ### Tips
