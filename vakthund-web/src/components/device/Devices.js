@@ -3,11 +3,12 @@ import {CloseButton} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getDevices} from "../../redux/actions/Actions";
-import {Alert, Badge, Button, Card, CardActions, CardContent, IconButton, Skeleton} from "@mui/joy";
+import {Alert, Badge, Button, Card, CardActions, CardContent, Grid, IconButton, Input, Skeleton} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import {useEffectOnce} from "react-use";
 import axios from "axios";
 import {getDeviceURL} from "../../redux/types/Types";
+import {Clear} from "@mui/icons-material";
 
 
 async function deleteDevice(id) {
@@ -18,6 +19,7 @@ function GetDeviceCard(dispatch, id, name, discoveryCount, queryCount) {
     return (
         <Card variant="soft" className={"me-1"} sx={{
             width: '260px',
+            maxWidth: '100%',
             overflow: 'auto',
             display: 'inline-block'
         }}>
@@ -58,20 +60,26 @@ function Devices() {
 
     return (
         <div>
-            <h2 className={"d-inline"}>Devices</h2>
-            <Link as={Link} to="/devices/actions/new"><Button className="d-inline float-end mx-1" variant="solid"
-                                                              color={"warning"} disabled={!data?.length}>+ Add
-                action</Button></Link>
-            <Link as={Link} to="/devices/new"><Button className="d-inline float-end" variant="solid">+ Add
-                device</Button></Link>
-            <div className={"card shadow my-3"}>
+            <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+                <Grid item md={9}>
+                    <h2 className={"d-inline"}>Devices</h2>
+                </Grid>
+                <Grid item md={3}>
+                        <Link as={Link} to="/devices/actions/new"><Button className="d-inline mx-1 float-end" variant="solid"
+                                                                          color={"warning"} disabled={!data?.length}>+ Add
+                            action</Button></Link>
+                        <Link as={Link} to="/devices/new"><Button className="d-inline float-end" variant="solid">+ Add
+                            device</Button></Link>
+                </Grid>
+            </Grid>
+            <div className={"card shadow my-3"} style={{"width": "100%"}}>
                 <div className={"card-body"}>
                     {data?.length === 0 ? <Alert color="warning" className={"mb-2"}>No devices yet.</Alert> : ""}
 
                     {data?.length > 0 ? data.map(i => GetDeviceCard(dispatch, i.id, i.name, i.discoveries, i.queries))
                         : Array(3).fill().map(() => <Skeleton animation="wave" level={"body-lg"}
                                                               className={"me-1 d-inline-block"} variant={"rectangular"}
-                                                              height={"160px"} width={"260px"}/>)}
+                                                              height={"160px"} width={"260px"} style={{maxWidth: "100%"}}/>)}
                 </div>
             </div>
         </div>

@@ -85,7 +85,6 @@ function ManageAction() {
                             <RadioGroup>
                                 <FormLabel>Execution schedule</FormLabel>
                                 <List sx={{
-                                    minWidth: 240,
                                     '--List-gap': '0.5rem',
                                     '--ListItem-paddingY': '1rem',
                                     '--ListItem-radius': '8px',

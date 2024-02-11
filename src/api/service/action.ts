@@ -33,6 +33,7 @@ export class ActionService {
       throw new Error('Discovery not found');
     }
 
+    // Replace the action's shell command variables with the discovery's values
     const cmd = action.cmd.replace(
       /%url|%ip/g,
       (match: any) => {
@@ -94,6 +95,12 @@ export class ActionService {
     });
   };
 
+  /**
+   * Sends a Server Side Event containing the CLI output so far.
+   *
+   * @param {any} response - the response object
+   * @param {any} buffer - the buffer to be sent
+   */
   private sendMsg(response: any, buffer: any) {
     response.write(`data: ${JSON.stringify(buffer)}\n\n`);
   }

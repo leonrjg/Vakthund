@@ -1,25 +1,27 @@
 import React, {useCallback, useMemo, useRef, useState} from "react";
-import {Badge, Button, CloseButton} from "react-bootstrap";
+import {Badge} from "react-bootstrap";
 import {Link, useSearchParams} from "react-router-dom";
 import PingButton from "../PingButton";
 import {AgGridReact} from "ag-grid-react";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {useUpdateEffect} from "react-use";
-import {Input} from "@mui/joy";
+import {Button, Grid, Input} from "@mui/joy";
+import {Clear} from "@mui/icons-material";
 
 const DiscoveryTable = ({lst}) => {
-    const gridStyle = useMemo(() => ({height: '500px', width: '100%'}), []);
+    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
 
     const gridRef = useRef();
 
     const [rowData, setRowData] = useState(lst);
 
     const [colDefs, setColDefs] = useState([
-        {field: "last_updated"},
-        {field: "url"},
+        {field: "last_updated", minWidth: 100},
+        {field: "url", minWidth: 200},
         {
             field: "Device.name",
+            minWidth: 100,
             cellRenderer: params => {
                 return <Link to={`/?query=${params.data.Device?.name}`}>
                     <Badge bg="primary">{params.data.Device?.name}</Badge>
@@ -28,6 +30,7 @@ const DiscoveryTable = ({lst}) => {
         },
         {
             field: "tags",
+            minWidth: 100,
             cellRenderer: params => {
                 return params.data.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Badge
                     bg="secondary" className={"me-1"}>{tag}</Badge></Link>)
@@ -35,10 +38,11 @@ const DiscoveryTable = ({lst}) => {
         },
         {
             field: "",
+            minWidth: 250,
             cellRenderer: params => {
                 return <>
                     <PingButton url={params.data.url}/>
-                    <Link to={`/discovery/${params.data.id}`}><Button size={"sm"} variant="secondary"
+                    <Link to={`/discovery/${params.data.id}`}><Button size="sm" color="neutral"
                                                                       className="bg-gradient">Details</Button></Link>
                 </>
             }
@@ -47,7 +51,7 @@ const DiscoveryTable = ({lst}) => {
 
     const defaultColDef = useMemo(() => {
         return {
-            flex: 1,
+            resizable: true
         };
     }, []);
 
@@ -79,25 +83,35 @@ const DiscoveryTable = ({lst}) => {
 
     return (
         <div>
-            <div className="mb-1 w-100">
-                <Input size={"md"} className={"d-inline-block"} sx={{"width": "256"}}
-                       id="filter-text-box"
-                       autoComplete={"off"}
-                       placeholder="Filter"
-                       onInput={onFilterTextBoxChanged}
-                />
-                <CloseButton style={{verticalAlign: "text-top"}} className={"mx-1"} onClick={() => {
-                    updateFilterTextBox(null)
-                }}/>
-                <h4 style={{"display": "inline", "position": "absolute", "right": "30px"}}>Discoveries</h4>
+            <div className="mb-1">
+                <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+                    <Grid item md={10}>
+                        <Input size="md" className={"float-start"} style={{"maxWidth": "100%"}}
+                               id="filter-text-box"
+                               autoComplete={"off"}
+                               placeholder="Filter"
+                               onInput={onFilterTextBoxChanged}
+                               startDecorator={<Button variant="soft" color="neutral" startDecorator={<Clear/>} onClick={() => {
+                                   updateFilterTextBox(null)
+                               }}></Button>}
+                        />
+                    </Grid>
+                    <Grid item md={2}>
+                        <center><h4 className={"text-nowrap float-end"}>Discoveries</h4></center>
+                    </Grid>
+                </Grid>
             </div>
-            <div style={gridStyle} className="ag-theme-quartz">
+            <div style={gridStyle} className="ag-theme-quartz my-3">
                 <AgGridReact
                     ref={gridRef}
                     rowData={rowData}
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}
                     pagination={true}
+                    domLayout='autoHeight'
+                    autoSizeStrategy={{
+                        type: 'fitGridWidth'
+                    }}
                     paginationAutoPageSize={true}
                     onGridReady={() => updateFilterTextBox(getQuery())}
                 />
