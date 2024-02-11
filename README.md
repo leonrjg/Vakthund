@@ -70,6 +70,7 @@ If the app is not working, the following commands might help.
 ### Tips
 - Make sure the app's source directory is writable since the app will attempt to create a SQLite database there if no other DBMS is configured.
 - If you wish to use another DBMS, set the following environment variables accordingly: `db_type=[sqlite|mysql|postgres]` `db_host` `db_user` `db_password` `db_name`
+- If using a container, expose ports 18000 (web UI) and 18001 (web API).
 
 ## Configuration
 By following the previous steps, you will have the web dashboard working; however, the component responsible for grabbing/updating the devices from the search engines must be executed separately:
