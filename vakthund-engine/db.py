@@ -11,7 +11,7 @@ if db_type == 'mysql':
 elif db_type == 'postgres':
     db = PostgresqlDatabase(name, host=host, user=user, password=password)
 else:
-    db = SqliteDatabase(str.format(f"{get_project_dir()}../vakthund.db"))
+    db = SqliteDatabase(str.format(f"{get_project_dir()}../vakthund.db"),  timeout=10)
 
 
 class Discovery(Model):
