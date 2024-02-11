@@ -19,6 +19,7 @@ router.get<{}, any>('/:id', async (req, res) => {
 });
 
 router.get<{}, any>('/:targetId/action/:id', async (req, res) => {
+  // Required headers for Server Side Events (real-time CLI output)
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Connection', 'keep-alive');

@@ -19,6 +19,7 @@ export class SettingsService {
       userData = '{}';
     }
 
+    // Set the user config values (vk-config.json) to the base config structure (vk-config-sample.json)
     return Object.assign(JSON.parse(structure), JSON.parse(userData));
 
 
