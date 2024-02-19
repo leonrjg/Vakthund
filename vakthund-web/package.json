@@ -31,8 +31,8 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "start-client-sync": "pm2 serve --no-daemon build 18000",
-    "start-client": "pm2 serve build 18000",
+    "start-client-sync": "pm2 serve --no-daemon build 18000 --spa",
+    "start-client": "pm2 serve build 18000 --spa",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
