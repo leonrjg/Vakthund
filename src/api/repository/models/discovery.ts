@@ -49,7 +49,7 @@ export const DiscoveryMap = (sequelize: Sequelize) => {
       type: DataTypes.DATE,
     },
     full_data: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('long'),
     },
     source: {
       type: DataTypes.STRING(60),

@@ -8,7 +8,7 @@ from shutil import copyfile
 import requests
 
 import engines
-from db import Discovery, Query, Action
+from db import Discovery, Query, Action, db_type
 from entities.item import Item
 from util import get_project_dir
 
@@ -34,10 +34,10 @@ def insert(items: List[Item], device_id: int) -> None:
                                              full_data=r.full_data,
                                              source=r.source,
                                              last_updated=datetime.now()) \
-                .on_conflict(conflict_target={Discovery.ip},
+                .on_conflict(conflict_target={Discovery.ip} if db_type != 'mysql' else None,
                              update={Discovery.url: r.url, Discovery.device_id: device_id, Discovery.tags: tags,
-                                     Discovery.full_data: r.full_data, Discovery.source: r.source,
-                                     Discovery.last_updated: datetime.now()}).execute()
+                                     Discovery.full_data: r.full_data, Discovery.source: r.source})
+                                     .execute()
         except Exception:
             traceback.print_exc()
             continue
