@@ -36,8 +36,7 @@ def insert(items: List[Item], device_id: int) -> None:
                                              last_updated=datetime.now()) \
                 .on_conflict(conflict_target={Discovery.ip} if db_type != 'mysql' else None,
                              update={Discovery.url: r.url, Discovery.device_id: device_id, Discovery.tags: tags,
-                                     Discovery.full_data: r.full_data, Discovery.source: r.source})
-                                     .execute()
+                                     Discovery.full_data: r.full_data, Discovery.source: r.source}).execute()
         except Exception:
             traceback.print_exc()
             continue
