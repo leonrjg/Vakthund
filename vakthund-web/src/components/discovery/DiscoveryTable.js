@@ -10,14 +10,14 @@ import {Button, Grid, Input} from "@mui/joy";
 import {Clear} from "@mui/icons-material";
 
 const DiscoveryTable = ({lst}) => {
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const gridStyle = useMemo(() => ({height: '500px', width: '100%'}), []);
 
     const gridRef = useRef();
 
     const [rowData, setRowData] = useState(lst);
 
     const [colDefs, setColDefs] = useState([
-        {field: "last_updated", minWidth: 100},
+        {field: "last_updated", sort: "desc", minWidth: 100},
         {field: "url", minWidth: 200},
         {
             field: "Device.name",
@@ -108,11 +108,10 @@ const DiscoveryTable = ({lst}) => {
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}
                     pagination={true}
-                    domLayout='autoHeight'
+                    paginationSize={50}
                     autoSizeStrategy={{
                         type: 'fitGridWidth'
                     }}
-                    paginationAutoPageSize={true}
                     onGridReady={() => updateFilterTextBox(getQuery())}
                 />
             </div>
