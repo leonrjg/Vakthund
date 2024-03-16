@@ -112,6 +112,7 @@ const DiscoveryTable = ({lst}) => {
                     autoSizeStrategy={{
                         type: 'fitGridWidth'
                     }}
+                    enableCellTextSelection="true"
                     onGridReady={() => updateFilterTextBox(getQuery())}
                 />
             </div>
