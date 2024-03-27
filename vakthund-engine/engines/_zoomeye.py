@@ -2,7 +2,7 @@
 import json
 import os
 from typing import List
-from zoomeye.sdk import ZoomEye
+from zoomeyehk.sdk import ZoomEye
 from util import get_attr_by_path, get_project_dir, get_mock
 from entities.item import Item
 
