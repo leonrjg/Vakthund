@@ -1,0 +1,20 @@
+{
+  "engines": {
+    "shodan": {
+      "api_key": "",
+      "tag_attributes": [
+        "location.city",
+        "location.country_name",
+        "location.region_code"
+      ]
+    },
+    "zoomeye": {
+      "api_key": "",
+      "tag_attributes": [
+        "portinfo.app",
+        "geoinfo.city.names.en",
+        "geoinfo.country.names.en"
+      ]
+    }
+  }
+}

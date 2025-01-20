@@ -1,8 +1,9 @@
 .idea/
 
 # Vakthund
+data/
 config/vk-config.json
-vakthund.db
+**/vakthund.db
 
 # Logs
 logs

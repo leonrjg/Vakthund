@@ -1,6 +1,6 @@
 {
   "name": "vakthund-web",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -31,9 +31,7 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "start-client-sync": "pm2 serve --no-daemon build 18000 --spa",
-    "start-client": "pm2 serve build 18000 --spa",
-    "start": "react-scripts start",
+    "start": "pm2 serve --no-daemon build 18000 --spa",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -42,18 +40,6 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
     ]
   }
 }

@@ -13,9 +13,8 @@ from entities.item import Item
 from util import get_project_dir
 
 VK_BACKEND_URL = 'http://localhost:18001/api'
-CONFIG_DIR = f'{get_project_dir()}../config'
+CONFIG_DIR = f'{get_project_dir()}../data'
 CONFIG_FILE = f'{CONFIG_DIR}/vk-config.json'
-CONFIG_SAMPLE_FILE = f'{CONFIG_DIR}/vk-config-sample.json'
 MAX_ACTIONS_PER_QUERY = 3
 
 
@@ -54,9 +53,6 @@ def insert(items: List[Item], device_id: int) -> None:
 
 
 def get_engine_config(engine: str) -> tuple:
-    if not os.path.exists(CONFIG_FILE):
-        copyfile(CONFIG_SAMPLE_FILE, CONFIG_FILE)
-
     with open(CONFIG_FILE, 'r') as f:
         config = json.load(f)
         api_key = config['engines'][engine]['api_key']
@@ -91,4 +87,6 @@ def run_engine():
 
 
 if __name__ == '__main__':
+    if not os.path.exists(CONFIG_FILE):
+        raise Exception("Edit your config for the first time. Go to the Settings page, add API keys, and save.")
     run_engine()
