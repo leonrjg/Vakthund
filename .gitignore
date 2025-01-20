@@ -1,7 +1,6 @@
 .idea/
 
 # Vakthund
-data/
 config/vk-config.json
 **/vakthund.db
 
