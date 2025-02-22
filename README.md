@@ -4,14 +4,12 @@ Self-hosted web dashboard for security researchers to manage and track IoT devic
 
 ![vk example](https://github.com/leonrjg/Vakthund/assets/5253770/63d45f38-7a39-43b0-8003-2a1e91535bed)
 
-
-
 ## 🟍 Features:
-🟢 Periodically save hosts that match certain criteria on the search engines
+🟢 Periodically save hosts that match certain criteria on IoT search engines
 
 🟢 Configure and execute actions targeting certain hosts
 
-🟢 Choose what search engine to use for each device
+🟢 Add multiple search engine queries for each device
 
 🟢 Filter hosts by tag, device type or any related value
 
@@ -29,7 +27,7 @@ docker compose up
 
 Once the setup is done, go to http://localhost:18000 on your browser.
 
-If the app is not working, the following commands might help.
+If the app is not working, the following commands might help:
 
 ## Troubleshooting
 
@@ -44,14 +42,6 @@ cd vakthund-engine
 python main.py
 ```
 **Running the scan from the web UI is a planned feature.**
-- Make sure **at least one device exists** before running the engine, even if using [vk-use-mocks](#mock-data).
-- You can add your search engine API keys (Shodan, ZoomEye, or both) by navigating to the _Settings_ page of the web dashboard.
-
-### Mock data
-If you do not have API keys and wish to try the app with test data, set the `vk_use_mocks` environment variable to any value and run the previous `vakthund-engine` script.
-The web dashboard should then be populated with a few test items.
+- You can add your search engine API keys (Shodan, ZoomEye, etc) on the **Settings** page of the web dashboard.
 
 ---
-
-### Disclaimer
-Do not expose this software on the Internet; some user-submitted input is executed on the shell.

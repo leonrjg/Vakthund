@@ -1,57 +1,70 @@
 import React, {useCallback, useMemo, useRef, useState} from "react";
-import {Badge} from "react-bootstrap";
 import {Link, useSearchParams} from "react-router-dom";
 import PingButton from "../PingButton";
 import {AgGridReact} from "ag-grid-react";
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {useUpdateEffect} from "react-use";
-import {Button, Grid, Input} from "@mui/joy";
+import {Button, Chip, Grid, Input} from "@mui/joy";
 import {Clear} from "@mui/icons-material";
+import Box from "@mui/material/Box";
 
-const DiscoveryTable = ({lst}) => {
-    const gridStyle = useMemo(() => ({height: '500px', width: '100%'}), []);
+const Table = ({lst}) => {
+    const containerStyle = useMemo(() => ({ width: "100%", height: "72vh", marginBottom: "8vh" }), []);
+    const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
 
     const gridRef = useRef();
 
     const [rowData, setRowData] = useState(lst);
 
     const [colDefs, setColDefs] = useState([
-        {field: "last_updated", sort: "desc", minWidth: 100},
-        {field: "url", minWidth: 200},
+        {
+            field: "last_updated",
+            sort: "desc",
+            minWidth: 100,
+            flex: 1
+        },
+        {
+            field: "url",
+            minWidth: 200,
+            flex: 2
+        },
         {
             field: "Device.name",
-            minWidth: 100,
             cellRenderer: params => {
                 return <Link to={`/?query=${params.data.Device?.name}`}>
-                    <Badge bg="primary">{params.data.Device?.name}</Badge>
+                    <Chip color={"primary"}>{params.data.Device?.name}</Chip>
                 </Link>
-            }
+            },
+            flex: 1
         },
         {
             field: "tags",
             minWidth: 100,
             cellRenderer: params => {
-                return params.data.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Badge
-                    bg="secondary" className={"me-1"}>{tag}</Badge></Link>)
-            }
+                return params.data.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Chip color={"neutral"} className={"me-1"}>{tag}</Chip></Link>)
+            },
+            flex: 3
         },
         {
             field: "",
-            minWidth: 250,
             cellRenderer: params => {
                 return <>
+                    <Box>
                     <PingButton url={params.data.url}/>
-                    <Link to={`/discovery/${params.data.id}`}><Button size="sm" color="neutral"
-                                                                      className="bg-gradient">Details</Button></Link>
+                    <Link to={`/discovery/${params.data.id}`}>
+                        <Button size="sm" color="neutral" className="bg-gradient">Details</Button>
+                    </Link>
+                    </Box>
                 </>
-            }
+            },
+            flex: 1
         }
     ]);
 
     const defaultColDef = useMemo(() => {
         return {
-            resizable: true
+            resizable: true,
         };
     }, []);
 
@@ -82,10 +95,10 @@ const DiscoveryTable = ({lst}) => {
     }, [getQuery()]);
 
     return (
-        <div>
+        <div style={containerStyle}>
             <div className="mb-1">
                 <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-                    <Grid item md={10}>
+                    <Grid item md={9}>
                         <Input size="md" className={"float-start"} style={{"maxWidth": "100%"}}
                                id="filter-text-box"
                                autoComplete={"off"}
@@ -96,8 +109,8 @@ const DiscoveryTable = ({lst}) => {
                                }}></Button>}
                         />
                     </Grid>
-                    <Grid item md={2}>
-                        <center><h4 className={"text-nowrap float-end"}>Discoveries</h4></center>
+                    <Grid item md={3}>
+                        <Link as={Link} to="/discovery/new"><Button className="d-inline float-end" variant="solid">+ Add manual discovery</Button></Link>
                     </Grid>
                 </Grid>
             </div>
@@ -107,11 +120,11 @@ const DiscoveryTable = ({lst}) => {
                     rowData={rowData}
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}
-                    pagination={true}
-                    paginationSize={50}
                     autoSizeStrategy={{
                         type: 'fitGridWidth'
                     }}
+                    pagination={true}
+                    paginationAutoPageSize={true}
                     enableCellTextSelection="true"
                     onGridReady={() => updateFilterTextBox(getQuery())}
                 />
@@ -120,4 +133,4 @@ const DiscoveryTable = ({lst}) => {
     );
 };
 
-export default DiscoveryTable;
+export default Table;

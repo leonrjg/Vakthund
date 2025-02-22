@@ -15,7 +15,7 @@ from util import get_project_dir
 VK_BACKEND_URL = 'http://localhost:18001/api'
 CONFIG_DIR = f'{get_project_dir()}../data'
 CONFIG_FILE = f'{CONFIG_DIR}/vk-config.json'
-MAX_ACTIONS_PER_QUERY = 3
+MAX_ACTIONS_PER_QUERY = 10
 
 
 def insert(items: List[Item], device_id: int) -> None:
@@ -25,7 +25,7 @@ def insert(items: List[Item], device_id: int) -> None:
         try:
             status = "Updating" if existing_discovery else "Inserting"
             print(f"{status} discovery ({r.url})")
-            tags = ','.join(r.tags)
+            tags = ','.join(r.tags) if r.tags else ''
             new_discovery = Discovery.insert(url=r.url,
                                              ip=r.ip,
                                              device_id=device_id,
@@ -54,14 +54,20 @@ def insert(items: List[Item], device_id: int) -> None:
 
 def get_engine_config(engine: str) -> tuple:
     with open(CONFIG_FILE, 'r') as f:
-        config = json.load(f)
-        api_key = config['engines'][engine]['api_key']
-        tag_attributes = config['engines'][engine].get('tag_attributes') or []
+        json_config = json.load(f)
+        engines = {k.lower(): v for k, v in json_config['engines'].items()}
+        api_key = engines[engine]['api_key']
+        tag_attributes = engines[engine].get('tag_attributes') or []
         return api_key, tag_attributes
 
 
 def run_engine():
-    searches = Query.select()
+    searches = Query.select().where(Query.enabled != False)
+
+    if not searches:
+        print("Nothing to do: either there are no devices or all queries are disabled")
+        return
+
     for s in searches:
         print(f'Searching: "{s.query}" @ {s.engine}')
         engine_name = s.engine.lower()
@@ -88,5 +94,5 @@ def run_engine():
 
 if __name__ == '__main__':
     if not os.path.exists(CONFIG_FILE):
-        raise Exception("Edit your config for the first time. Go to the Settings page, add API keys, and save.")
+        raise Exception("To edit your config for the first time, go to the Settings page, add API keys, and save.")
     run_engine()

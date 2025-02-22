@@ -1,21 +1,20 @@
-import React from "react";
-import {CloseButton} from "react-bootstrap";
+import * as React from 'react';
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getDevices} from "../../redux/actions/Actions";
-import {Alert, Badge, Button, Card, CardActions, CardContent, Grid, IconButton, Input, Skeleton} from "@mui/joy";
+import {Alert, Badge, Button, Card, CardActions, CardContent, Grid, IconButton, Skeleton} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import {useEffectOnce} from "react-use";
 import axios from "axios";
 import {getDeviceURL} from "../../redux/types/Types";
-import {Clear} from "@mui/icons-material";
+import {Close} from "@mui/icons-material";
 
 
 async function deleteDevice(id) {
     return (await axios.delete(getDeviceURL(id), {headers: {'Content-Type': 'application/json'}})).status === 200;
 }
 
-function GetDeviceCard(dispatch, id, name, discoveryCount, queryCount) {
+function GetDeviceCard(dispatch, id, name, discoveryCount) {
     return (
         <Card variant="soft" className={"me-1"} sx={{
             width: '260px',
@@ -25,7 +24,7 @@ function GetDeviceCard(dispatch, id, name, discoveryCount, queryCount) {
         }}>
             <CardContent orientation="horizontal">
                 <CardContent>
-                    <CloseButton onClick={async () => {
+                    <Close onClick={async () => {
                         if (!window.confirm("Are you sure you want to delete this device?")) {
                             return;
                         }
@@ -76,7 +75,7 @@ function Devices() {
                 <div className={"card-body"}>
                     {data?.length === 0 ? <Alert color="warning" className={"mb-2"}>No devices yet.</Alert> : ""}
 
-                    {data?.length > 0 ? data.map(i => GetDeviceCard(dispatch, i.id, i.name, i.discoveries, i.queries))
+                    {data?.length > 0 ? data.map(i => GetDeviceCard(dispatch, i.id, i.name, i.discoveries))
                         : Array(3).fill().map(() => <Skeleton animation="wave" level={"body-lg"}
                                                               className={"me-1 d-inline-block"} variant={"rectangular"}
                                                               height={"160px"} width={"260px"} style={{maxWidth: "100%"}}/>)}

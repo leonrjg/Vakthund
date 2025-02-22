@@ -1,13 +1,16 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Sheet from '@mui/joy/Sheet';
-import {Button, Divider, Input, List, ListItem, ListItemButton, ListItemDecorator} from "@mui/joy";
+import {Button, Divider, Input, List, ListItem, ListItemButton, ListItemDecorator, Switch} from "@mui/joy";
 import axios from "axios";
 import {DEVICE_URL, getDeviceURL} from "../../redux/types/Types";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {GetSearchEngineRadio} from "./utils/SearchEngineRadio";
 import {useEffectOnce} from "react-use";
+import {getDevices, getSettings} from "../../redux/actions/Actions";
+import {Close} from "@mui/icons-material";
+import {useDispatch, useSelector} from "react-redux";
 
 
 async function sendRequest(sendFunction, url, data) {
@@ -25,9 +28,29 @@ async function sendDevice(id, data) {
 function ManageDevice() {
     const params = useParams();
     const navigate = useNavigate();
+
+    const settings = useSelector((state) => { return state.settings });
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getSettings());
+    }, []);
+
     const [state, setState] = useState({});
+    const [queries, setQueries] = useState([]);
+
     const pushToState = (obj) => {
         setState({...state, ...obj});
+    }
+    const addQuery = (obj) => {
+        setQueries((prevAll) => [...prevAll, obj]);
+    }
+    const updateQuery = (index, obj) => {
+        setQueries((prevArr) => {
+            const result = [...prevArr];
+            result[index] = obj
+            return result;
+        });
     }
 
     useEffectOnce(() => {
@@ -35,10 +58,9 @@ function ManageDevice() {
             axios.get(getDeviceURL(params.id)).then(res => {
                 pushToState({
                     nameValue: res.data.name,
-                    queryValue: res.data.queries[0]?.query,
-                    engineValue: res.data.queries[0]?.engine,
                     actionsValue: res.data.actions
                 });
+                setQueries(res.data.queries);
             })
         }
     })
@@ -46,6 +68,7 @@ function ManageDevice() {
     return (
         <div>
             <h2 className={"d-inline"}>Devices -> {params.id ? `Edit device ${state.nameValue}` : "New device"}</h2>
+            <Link as={Link} to="/devices/actions/new"><Button className="d-inline mx-1 float-end" variant="solid" color={"warning"}>+ Add action</Button></Link>
             <div className={"card shadow my-3"}>
                 <div className={"card-body"}>
                     <form onSubmit={async (e) => {
@@ -54,8 +77,7 @@ function ManageDevice() {
                             e.stopPropagation();
                             await sendDevice(params.id, {
                                 "name": state.nameValue,
-                                "query": state.queryValue,
-                                "engine": state.engineValue
+                                "queries": queries.filter(q => q != null),
                             });
                             navigate('/devices');
                         }
@@ -66,15 +88,29 @@ function ManageDevice() {
                                    sx={{mb: 2}}/>
                         </FormControl>
                         <Divider/>
+                            {
+                                queries.map((query, i) => {
+                                    if (!query) {
+                                        return null;
+                                    }
+                                    return <FormControl>
+                                            <Sheet variant="soft" sx={{p: 2, mb: 1}}>
+                                            <Close onClick={async () => { updateQuery(i, null) }} className={"float-end ms-5 mb-5"}/>
+                                            <FormLabel>Query</FormLabel>
+                                            <Input required value={queries[i]?.query}
+                                                   onChange={e => {query.query = e.target.value; updateQuery(i, query)}} placeholder="Query"
+                                                   sx={{mb: 2}}/>
+                                            <FormLabel>Enabled</FormLabel>
+                                            <Switch checked={query.enabled} onChange={() => {query.enabled = !query.enabled; updateQuery(i, query)}} inputProps={{ 'aria-label': 'controlled' }} />
+                                            {GetSearchEngineRadio(e => {query.engine = e.target.value; updateQuery(i, query)}, query.engine, settings)}
+                                            </Sheet>
+                                        </FormControl>
+                                })
+                            }
                         <FormControl>
-                            <Sheet variant="soft" sx={{p: 2}}>
-                                <FormLabel>Query</FormLabel>
-                                <Input required value={state.queryValue}
-                                       onChange={e => pushToState({queryValue: e.target.value})} placeholder="Query"
-                                       sx={{mb: 2}}/>
-                                {GetSearchEngineRadio(e => pushToState({engineValue: e.target.value}), state.engineValue)}
-                            </Sheet>
+                            <Button color={"neutral"} variant={"outlined"} onClick={() => addQuery({})}>+ Add query</Button>
                         </FormControl>
+
                         {params.id ?
                             <FormControl>
                                 <Sheet variant="soft" sx={{p: 2, mt: 2}}>

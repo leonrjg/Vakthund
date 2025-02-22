@@ -14,7 +14,8 @@ export function toModel(discovery: any): {
   source: string;
   device_id: number;
   url: string;
-  tags?: string
+  tags?: string,
+  last_updated: Date
 } {
   return {
     full_data: discovery.full_data,
@@ -23,5 +24,6 @@ export function toModel(discovery: any): {
     source: discovery.source,
     tags: discovery.tags,
     url: discovery.url,
+    last_updated: new Date()
   };
 }

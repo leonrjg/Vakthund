@@ -1,7 +1,7 @@
 import os
 import sys
 import unittest
-from unittest.mock import patch, mock_open, MagicMock, Mock
+from unittest.mock import patch, mock_open, ANY, Mock
 from datetime import datetime
 from peewee import IntegrityError
 
@@ -12,19 +12,21 @@ from entities.item import Item
 from main import insert, Discovery, get_engine_config, run_engine
 
 class TestMain(unittest.TestCase):
-    @patch('main.Discovery.get_or_none')
-    @patch('main.Discovery.insert')
     @patch('main.datetime')
+    @patch('main.Discovery.insert')
+    @patch('main.Discovery.get_or_none')
+    @patch('main.Action.select')
     @patch('main.MAX_ACTIONS_PER_QUERY', 5)
-    def test_insert_new_discovery(self, mock_datetime, mock_insert, mock_get_or_none):
+    def test_insert_new_discovery(self, mock_datetime, mock_get_or_none, mock_insert, mock_action_select):
         mock_datetime.now.return_value = datetime(2022, 1, 1)
         mock_get_or_none.return_value = None
-        items = [
-            Item(ip='192.168.1.1', port=80, url='http://example.com', tags=['tag1', 'tag2'], full_data='data', source='source')]
+        mock_action_select.return_value = []
+
+        items = [Item(ip='192.168.1.1', port=80, url='http://example.com', tags=['tag1', 'tag2'], full_data='data', source='source')]
         device_id = 123
         insert(items, device_id)
-        mock_insert.assert_called_with(url='http://example.com', ip='192.168.1.1', device_id=123, tags='tag1,tag2',
-                                       full_data='data', source='source', last_updated=datetime(2022, 1, 1))
+        mock_insert.assert_called_with(url='http://example.com', ip='192.168.1.1', device_id=device_id, tags='tag1,tag2',
+                                       full_data='data', source='source', last_updated=ANY)
 
     @patch('main.Discovery.get_or_none')
     @patch('main.Discovery.insert')

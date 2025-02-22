@@ -56,14 +56,19 @@ export class DiscoveryService {
   };
 
   getActions = async (deviceId: number) => {
-    return this.actionRepo.getModel().findAll({
+    return (await this.actionRepo.getModel().findAll({
       where: {
         [Op.or]: [
           { device_id: deviceId },
           { device_id: null },
         ],
       },
-    });
+    })).map((action) => {
+        return {
+            ...action.dataValues,
+          "has_prompt": action.cmd.includes("%prompt")
+        };
+        });
   };
 
   getExecutions = async (discoveryId: number) => {
@@ -78,4 +83,9 @@ export class DiscoveryService {
   newDiscovery = async (discovery: DiscoveryDTO) => {
     return this.discoveryRepo.getModel().create(toModel(discovery));
   };
+
+  deleteDiscovery = async (discoveryId: number) => {
+    let discovery = await this.getDiscoveryById(discoveryId);
+    return discovery?.destroy();
+  }
 }

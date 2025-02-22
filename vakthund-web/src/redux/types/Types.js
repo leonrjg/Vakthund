@@ -8,6 +8,11 @@ export const DISCOVERY_DETAIL_URL = (id) =>
 export const DEVICE_ALL = "device_all";
 export const SETTINGS = "settings";
 export const DEVICE_URL = `${BACKEND_URL_PREFIX}/api/device`;
+export const DISCOVERY_URL = `${BACKEND_URL_PREFIX}/api/discovery`;
+
+export function getDiscoveryURL(id) {
+    return `${DISCOVERY_URL}/${id}`;
+}
 
 export function getDeviceURL(id) {
     return `${DEVICE_URL}/${id}`;

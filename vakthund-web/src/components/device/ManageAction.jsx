@@ -51,7 +51,7 @@ function ManageAction() {
     return (
         <div>
             <h2 className={"d-inline"}>Devices -> {params.id ? `Edit action ${state.titleValue}` : "New action"}</h2>
-            <div className={"card shadow my-3"}>
+            <div className={"card my-3"}>
                 <div className={"card-body"}>
                     <form onSubmit={async (e) => {
                         if (e.target.checkValidity()) {
@@ -72,9 +72,10 @@ function ManageAction() {
                                    sx={{mb: 1}} size={"lg"}/>
                         </FormControl>
                         <FormControl>
-                            <Select required value={state.deviceValue}
+                            <Select value={state.deviceValue}
                                     onChange={(_, value) => pushToState({deviceValue: value})}
                                     placeholder="Select a target device" size="lg" sx={{mb: 1}} variant="outlined">
+                                <Option key="" value=""><strong>[All devices]</strong></Option>
                                 {
                                     devices ? devices.map(device => <Option key={device.id} value={device.id}
                                                                             label={device.name}>{device.name}</Option>) : <></>
@@ -112,7 +113,7 @@ function ManageAction() {
                         </FormControl>
                         <FormLabel>Action script</FormLabel>
                         <Alert className={"mb-1"}>
-                            The following variables are available: <strong>%url, %ip</strong>
+                            The following variables are available: <strong>%url, %ip, %prompt (input will be requested on execution)</strong>
                         </Alert>
                         <FormControl>
                             <Textarea required minRows={5} value={state.scriptValue}

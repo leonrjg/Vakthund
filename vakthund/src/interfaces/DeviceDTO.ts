@@ -1,8 +1,11 @@
 
 export default interface DeviceDTO {
   name: string;
-  query?: string;
-  engine?: string;
+  queries?: {
+    query: string;
+    engine: string;
+    enabled?: boolean;
+  }[];
 }
 
 export function toModel(device: any): {
@@ -13,14 +16,13 @@ export function toModel(device: any): {
   };
 }
 
-export function toQueryModel(device_id: number, device: any): {
-  device_id: number
-  query: string;
-  engine: string;
-} {
-  return {
-    device_id: device_id,
-    query: device.query,
-    engine: device.engine,
-  };
+export function toQueryModel(device_id: number, device: DeviceDTO): any[] {
+  return device.queries?.map(q => {
+    return {
+      device_id: device_id,
+      query: q.query,
+      engine: q.engine,
+      enabled: q.enabled !== false,
+    };
+  }) || [];
 }

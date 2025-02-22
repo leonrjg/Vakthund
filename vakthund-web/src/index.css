@@ -12,13 +12,12 @@ tbody {
 }
 
 .container-bordered {
-    border: 1px solid grey;
     border-radius: 5px;
     margin-bottom: 30px;
 }
 
 .margin {
-    margin: 16px;
+    margin: 20px;
 }
 
 .footer {

@@ -25,11 +25,16 @@ router.get<{}, any>('/:targetId/action/:id', async (req, res) => {
   res.setHeader('Connection', 'keep-alive');
 
   // @ts-ignore
-  await actionService.executeAction(res, parseInt(req.params.targetId), parseInt(req.params.id));
+  await actionService.executeAction(res, parseInt(req.params.targetId), parseInt(req.params.id), req.query.prompt);
 });
 
 router.post<{}, any>('/', async (req, res) => {
   res.json(await discoveryService.newDiscovery(toModel(req.body)));
+});
+
+router.delete<{}, any>('/:id', async (req, res) => {
+  // @ts-ignore
+  res.json(await discoveryService.deleteDiscovery(req.params.id));
 });
 
 export default router;

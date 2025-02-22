@@ -5,6 +5,7 @@ import { DiscoveryRepository } from '../repository/discovery';
 import { QueryRepository } from '../repository/query';
 import { BaseRepository } from '../repository/base';
 import { ActionRepository } from '../repository/action';
+import { Op } from 'sequelize';
 
 @Service()
 export class DeviceService {
@@ -42,21 +43,26 @@ export class DeviceService {
   getDeviceById = async (id: number) => {
     const device = (await this.deviceRepo.getModel().findByPk(id))?.get();
     const queries = await this.queryRepo.getModel().findAll({ where: { device_id: device?.id } });
-    const actions = await this.actionRepo.getModel().findAll({ where: { device_id: device?.id } });
+    const actions = await this.actionRepo.getModel().findAll({ where: {
+        [Op.or]: [{ device_id: device?.id }, { device_id: null }],
+      } });
     return { ...device, queries: queries, actions: actions };
   };
 
   editDevice = async (id: number, body: any) => {
-    await this.baseRepo.conn.transaction(async (t) => {
-      await Promise.all([this.deviceRepo.getModel().findByPk(id, { transaction: t }).then(async device => {
-        device?.set(body);
-        await device?.save({ transaction: t });
-      }),
+    await this.baseRepo.conn.transaction(async (t: any) => {
+      await Promise.all([
+          this.deviceRepo.getModel().findByPk(id, { transaction: t }).then(async device => {
+            device?.set(body);
+            await device?.save({ transaction: t });
+          }),
 
-      this.queryRepo.getModel().findOne({ where: { device_id: id }, transaction: t }).then(async query => {
-        query?.set(toQueryModel(id, body));
-        await query?.save({ transaction: t });
-      }),
+          this.queryRepo.getModel().destroy({
+            where: { device_id: id },
+            transaction: t
+          }),
+
+          this.queryRepo.getModel().bulkCreate(toQueryModel(id, body), { transaction: t }),
       ]);
     });
   };
@@ -64,7 +70,7 @@ export class DeviceService {
   newDevice = async (body: any) => {
     await this.baseRepo.conn.transaction(async (t) => {
       const deviceCreation = await this.deviceRepo.getModel().create(toModel(body), { transaction: t });
-      await this.queryRepo.getModel().create(toQueryModel(deviceCreation.id, body), { transaction: t });
+      await this.queryRepo.getModel().bulkCreate(toQueryModel(deviceCreation.id, body), { transaction: t });
     });
   };
 

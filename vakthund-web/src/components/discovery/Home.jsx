@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllDiscoveries} from "../../redux/actions/Actions";
-import DiscoveryTable from "./DiscoveryTable";
+import Table from "./Table";
 
-function DiscoveryList() {
+function Home() {
     const [discoveryList, setDiscoveryList] = useState([]);
     const Dispatch = useDispatch();
 
@@ -20,14 +20,14 @@ function DiscoveryList() {
     return (
         <>
             {discoveryList?.length > 0 ? (
-                <DiscoveryTable lst={discoveryList}/>
+                <Table lst={discoveryList}/>
             ) : (
                 <>
-                    <DiscoveryTable lst={[]}/>
+                    <Table lst={[]}/>
                 </>
             )}
         </>
     );
 }
 
-export default DiscoveryList;
+export default Home;

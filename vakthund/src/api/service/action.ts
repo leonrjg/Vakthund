@@ -22,7 +22,7 @@ export class ActionService {
     this.discoveryService = discoveryService;
   }
 
-  executeAction = async (res: express.Response, targetId: number, id: number) => {
+  executeAction = async (res: express.Response, targetId: number, id: number, prompt?: string) => {
     const action = await this.getActionById(id);
     if (action == null) {
       throw new Error('Action not found');
@@ -35,36 +35,40 @@ export class ActionService {
 
     // Replace the action's shell command variables with the discovery's values
     const cmd = action.cmd.replace(
-      /%url|%ip/g,
+      /%url|%ip|%prompt/g,
       (match: any) => {
         switch (match) {
           case '%url':
             return discovery.url;
           case '%ip':
             return discovery.ip;
+          case '%prompt':
+            return prompt || res.end();
           default:
             return match;
         }
       },
     );
 
-    this.sendMsg(res, `> ${cmd}`);
+    let result = "";
+
+    result += this.echo(res, `> ${cmd}`);
 
     const childProcess = exec(cmd, { windowsHide: true });
 
     childProcess.stdout?.on('data', (data) => {
-      this.sendMsg(res, data.toString().trim());
+      result += this.echo(res, data.toString().trim());
     });
 
     childProcess.stderr?.on('data', (data) => {
-      this.sendMsg(res, data.toString().trim());
+      result += this.echo(res, data.toString().trim());
     });
 
     childProcess.on('close', (code) => {
       const success = code === 0;
 
       this.executionRepo.getModel().create({
-        'action_id': id, 'discovery_id': targetId, 'execution_date': new Date(), 'success': success,
+        'action_id': id, 'discovery_id': targetId, 'execution_date': new Date(), 'success': success, 'result': result
       });
 
       res.end();
@@ -81,7 +85,7 @@ export class ActionService {
 
   postAction = async (body: any) => {
     await this.actionRepo.getModel().create({
-      'device_id': body.device_id,
+      'device_id': body.device_id || null,
       'title': body.title,
       'cmd': body.cmd,
       'execute_on_discovery': !!body.execute_on_discovery,
@@ -101,8 +105,9 @@ export class ActionService {
    * @param {any} response - the response object
    * @param {any} buffer - the buffer to be sent
    */
-  private sendMsg(response: any, buffer: any) {
+  private echo(response: any, buffer: any): string {
     response.write(`data: ${JSON.stringify(buffer)}\n\n`);
+    return buffer;
   }
 
 }

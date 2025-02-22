@@ -1,42 +1,34 @@
-import {Container, Nav, Navbar} from "react-bootstrap";
-import DiscoveryList from "./components/discovery/DiscoveryList";
-import {Link, Route, Routes} from "react-router-dom";
-import Discovery from "./components/discovery/Discovery";
+import Home from "./components/discovery/Home";
+import {Route, Routes} from "react-router-dom";
+import View from "./components/discovery/View";
 import ErrorNotFound from "./components/ErrorNotFound";
 import Footer from "./components/Footer";
 import Devices from "./components/device/Devices";
 import Settings from "./components/Settings";
 import ManageDevice from "./components/device/ManageDevice";
 import ManageAction from "./components/device/ManageAction";
+import ManageDiscovery from "./components/discovery/Manage";
+import Navbar from "./Navbar";
+import Container from "@mui/material/Container";
 
 function App() {
     return (
         <div className="font color-body">
-            <Navbar className={"bg-dark bg-gradient"} variant="dark" expand="lg">
-                <Container fluid>
-                    <Navbar.Brand as={Link} to="/">Vakthund</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="ml-auto">
-                            <Nav.Link as={Link} to="/devices">Devices</Nav.Link>
-                            <Nav.Link as={Link} to="/settings" className="float-right">Settings</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
+            <Navbar />
             <div style={{margin: "30px"}}>
-                <Container fluid className="mt-3 bg-body container-bordered card shadow"
-                           style={{marginBottom: "100px", minWidth: "250px"}}>
+                <Container maxWidth={false} className="mt-3 bg-body container-bordered card shadow"
+                           style={{marginBottom: "50px", minWidth: "250px", height: "100%"}}>
                     <div className="margin">
                         <Routes>
-                            <Route path="/discovery/:id" element={<Discovery/>}/>
+                            <Route path="/discovery/:id" element={<View/>}/>
+                            <Route path="/discovery/new" element={<ManageDiscovery/>}/>
                             <Route path="/devices" element={<Devices/>}/>
                             <Route path="/devices/:id" element={<ManageDevice/>}/>
                             <Route path="/devices/new" element={<ManageDevice/>}/>
                             <Route path="/devices/actions/:id" element={<ManageAction/>}/>
                             <Route path="/devices/actions/new" element={<ManageAction/>}/>
                             <Route path="/settings" element={<Settings/>}/>
-                            <Route path="/" element={<DiscoveryList/>}/>
+                            <Route path="/" element={<Home/>}/>
                             <Route path="*" element={<ErrorNotFound/>}/>
                         </Routes>
                     </div>

@@ -14,8 +14,3 @@ def get_attr_by_path(o, path):
 
 def get_project_dir() -> str:
     return os.path.dirname(os.path.abspath(__file__)) + os.sep
-
-
-def get_mock(engine: str):
-    with open(f'{get_project_dir()}engines/mocks/{engine}.json', encoding='utf-8') as f:
-        return json.loads(f.read())

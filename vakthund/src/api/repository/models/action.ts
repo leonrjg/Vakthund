@@ -2,7 +2,7 @@ import { Model, Sequelize, DataTypes } from 'sequelize';
 export default class Action extends Model {
   declare id: number;
 
-  declare deviceId: number;
+  declare deviceId?: number;
 
   declare title: string;
 

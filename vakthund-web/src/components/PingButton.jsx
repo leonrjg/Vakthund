@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react';
 import timeout from "../Utils";
 import {Button} from "@mui/joy";
 
@@ -22,7 +22,7 @@ class PingButton extends React.Component {
 
     render() {
         return (
-            <Button size={"sm"} variant="soft" style={{"border": "1px solid"}} className={"bg-gradient me-1" + (this.state.pinging ? ' disabled' : '')}
+            <Button size={"sm"} variant="soft" style={{...this.props.style, "border": "1px solid"}} className={"bg-gradient me-1" + (this.state.pinging ? ' disabled' : '')}
                     onClick={async () => {
                         this.setState({pingText: "...", pinging: true});
                         let isSuccess = await ping(this.props.url);

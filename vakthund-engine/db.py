@@ -14,7 +14,7 @@ else:
     db_dir = str.format(f"{get_project_dir()}../data")
     if not os.path.exists(db_dir):
         os.makedirs(db_dir)
-    db = SqliteDatabase(db_dir + '/vakthund.db',  timeout=10)
+    db = SqliteDatabase(db_dir + '/vakthund.db',  timeout=15)
 
 
 class Discovery(Model):
@@ -36,6 +36,7 @@ class Query(Model):
     device_id = TextField(null=False)
     query = TextField(null=False)
     engine = TextField()
+    enabled = BooleanField()
 
     class Meta:
         database = db

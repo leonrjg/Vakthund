@@ -1,4 +1,4 @@
 peewee~=3.17.0
 requests
 shodan==1.31.0
-zoomeyehk==2.2.0
+zoomeyeai==3.0.1

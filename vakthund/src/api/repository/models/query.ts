@@ -7,6 +7,8 @@ export default class Query extends Model {
   declare query: string;
 
   declare engine: string;
+
+  declare enabled: boolean;
 }
 export const QueryMap = (sequelize: Sequelize) => {
   Query.init({
@@ -27,6 +29,10 @@ export const QueryMap = (sequelize: Sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    enabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    }
   }, {
     sequelize,
     tableName: 'vakthund_queries',
