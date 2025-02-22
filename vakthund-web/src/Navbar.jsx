@@ -26,7 +26,7 @@ function ResponsiveAppBar() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Link to={"/"} style={{textDecoration: "none", color: "unset"}}>
-                    <img src="/public/vakthund.svg" style={{"width":"30px", "mix-blend-mode": "softlight", "vertical-align": "top"}} />
+                    <img src="/vakthund.svg" style={{"width":"30px", "mix-blend-mode": "softlight", "vertical-align": "top"}} />
                     <Typography
                         variant="h6"
                         noWrap
