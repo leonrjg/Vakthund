@@ -79,7 +79,8 @@ describe('DeviceService', () => {
       const setMock = jest.fn();
       const saveMock = jest.fn();
       deviceRepo.getModel().findByPk = jest.fn().mockResolvedValue({ set: setMock, save: saveMock });
-      queryRepo.getModel().findOne = jest.fn().mockResolvedValue({ set: setMock, save: saveMock });
+      queryRepo.getModel().destroy = jest.fn().mockResolvedValue(undefined);
+      queryRepo.getModel().bulkCreate = jest.fn().mockResolvedValue([]);
       baseRepo.conn.transaction = jest.fn().mockImplementation(cb => cb(transactionMock));
 
       await service.editDevice(id, body);
@@ -96,7 +97,7 @@ describe('DeviceService', () => {
       const transactionMock = jest.fn() as unknown as jest.MockedFunction<Transaction>;
       const deviceCreationMock = { id: 1 };
       deviceRepo.getModel().create = jest.fn().mockResolvedValue(deviceCreationMock);
-      queryRepo.getModel().create = jest.fn().mockResolvedValue({});
+      queryRepo.getModel().bulkCreate = jest.fn().mockResolvedValue([]);
       baseRepo.conn.transaction = jest.fn().mockImplementation(cb => cb(transactionMock));
 
       await service.newDevice(body);
