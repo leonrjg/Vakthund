@@ -53,4 +53,4 @@ jobs:
 
       - name: Run tests
         working-directory: vakthund-engine
-        run: python -m pytest tests/ -v
+        run: python -m unittest discover -s tests -v
