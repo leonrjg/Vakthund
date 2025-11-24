@@ -10,6 +10,19 @@ export const SETTINGS = "settings";
 export const DEVICE_URL = `${BACKEND_URL_PREFIX}/api/device`;
 export const DISCOVERY_URL = `${BACKEND_URL_PREFIX}/api/discovery`;
 
+// Logs
+export const SYSTEM_LOGS = "system_logs";
+export const ACTION_LOGS = "action_logs";
+export const LOGS_URL = `${BACKEND_URL_PREFIX}/api/logs`;
+export const SYSTEM_LOGS_URL = `${LOGS_URL}/system`;
+export const ACTION_LOGS_URL = `${LOGS_URL}/actions`;
+
+// Scan
+export const SCAN_STATUS = "scan_status";
+export const SCAN_URL = `${BACKEND_URL_PREFIX}/api/scan`;
+export const SCAN_RUN_URL = `${SCAN_URL}/run`;
+export const SCAN_STATUS_URL = `${SCAN_URL}/status`;
+
 export function getDiscoveryURL(id) {
     return `${DISCOVERY_URL}/${id}`;
 }

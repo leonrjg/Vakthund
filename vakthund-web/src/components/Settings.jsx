@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import {getSettings} from "../redux/actions/Actions";
 import {Alert, Button, Textarea} from "@mui/joy";
 import {SETTINGS_URL} from "../redux/types/Types";
 import axios from "axios";
+import {PlayArrow} from "@mui/icons-material";
 
 async function postSettings(data) {
     return (await axios.post(SETTINGS_URL, data, {headers: {'Content-Type': 'application/json'}})).status === 200;
@@ -17,6 +19,7 @@ function Settings() {
     let [isSubmitted, setSubmitted] = useState(false);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(getSettings());
@@ -28,7 +31,16 @@ function Settings() {
 
     return (
         <div>
-            <h2 className={"d-inline"}>Settings</h2>
+            <div className="d-flex justify-content-between align-items-center">
+                <h2 className={"d-inline"}>Settings</h2>
+                <Button
+                    color="success"
+                    startDecorator={<PlayArrow />}
+                    onClick={() => navigate("/logs?scan=true")}
+                >
+                    Run Scan
+                </Button>
+            </div>
             <div className={"card shadow my-3"}>
                 <div className={"card-body"}>
                     {isSubmitted ?

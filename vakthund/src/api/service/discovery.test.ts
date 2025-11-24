@@ -17,16 +17,27 @@ describe('DiscoveryService', () => {
 
   beforeEach(() => {
     let baseRepo = mock<BaseRepository>();
-    let mockRepo = {
+    mockedDiscoveryRepository = {
       baseRepo: baseRepo,
       getModel: jest.fn().mockReturnValue({
         findAll: jest.fn(),
         findByPk: jest.fn(),
+        findOne: jest.fn(),
+        create: jest.fn(),
       }),
     };
-    mockedDiscoveryRepository = mockRepo;
-    mockedActionRepository = mockRepo;
-    mockedExecutionRepository = mockRepo;
+    mockedActionRepository = {
+      baseRepo: baseRepo,
+      getModel: jest.fn().mockReturnValue({
+        findAll: jest.fn(),
+      }),
+    };
+    mockedExecutionRepository = {
+      baseRepo: baseRepo,
+      getModel: jest.fn().mockReturnValue({
+        findAll: jest.fn(),
+      }),
+    };
 
     discoveryService = new DiscoveryService(
       mockedDiscoveryRepository,
@@ -55,13 +66,17 @@ describe('DiscoveryService', () => {
   describe('getDiscovery', () => {
     it('should return a single Discovery when provided an id', async () => {
       const mockDiscovery = { id: 1, device_id: 2 };
+      const mockAction = { dataValues: { id: 1, device_id: 2 }, cmd: 'echo test' };
+      const mockExecution = { id: 1, discovery_id: 1 };
       mockedDiscoveryRepository.getModel().findOne = jest.fn().mockResolvedValue(mockDiscovery);
+      mockedActionRepository.getModel().findAll = jest.fn().mockResolvedValue([mockAction]);
+      mockedExecutionRepository.getModel().findAll = jest.fn().mockResolvedValue([mockExecution]);
 
       const discovery = await discoveryService.getDiscovery(1);
 
       expect(discovery).toEqual({
-        'actions': await discoveryService.getActions(<number>mockDiscovery.device_id),
-        'executions': await discoveryService.getExecutions(1),
+        'actions': [{ id: 1, device_id: 2, has_prompt: false }],
+        'executions': [mockExecution],
         'details': mockDiscovery,
       });
     });
@@ -80,12 +95,12 @@ describe('DiscoveryService', () => {
 
   describe('getActions', () => {
     it('should return actions by deviceId', async () => {
-      const mockAction = { id: 1, device_id: 1 };
+      const mockAction = { dataValues: { id: 1, device_id: 1 }, cmd: 'echo %prompt' };
       mockedActionRepository.getModel().findAll = jest.fn().mockResolvedValue([mockAction]);
 
       const actions = await discoveryService.getActions(1);
 
-      expect(actions).toEqual([mockAction]);
+      expect(actions).toEqual([{ id: 1, device_id: 1, has_prompt: true }]);
     });
   });
 
@@ -116,7 +131,14 @@ describe('DiscoveryService', () => {
       const discovery = await discoveryService.newDiscovery(dto);
 
       expect(discovery).toEqual(mockDiscovery);
-      expect(mockedDiscoveryRepository.getModel().create).toBeCalledWith(toModel(dto));
+      expect(mockedDiscoveryRepository.getModel().create).toBeCalledWith(
+        expect.objectContaining({
+          device_id: dto.device_id,
+          ip: dto.ip,
+          source: dto.source,
+          url: dto.url,
+        })
+      );
     });
   });
 });
