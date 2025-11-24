@@ -31,7 +31,7 @@ function GetDeviceCard(dispatch, id, name, discoveryCount) {
                         await deleteDevice(id);
                         dispatch(getDevices());
                     }} className={"float-end"}/>
-                    <Link to={`/devices/` + id}><Typography level="h2"
+                    <Link to={`/devices/` + id}><Typography level="h3"
                                                             style={{textAlign: "center"}}>{name}</Typography></Link>
                 </CardContent>
             </CardContent>

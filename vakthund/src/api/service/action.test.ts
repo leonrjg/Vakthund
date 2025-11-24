@@ -3,19 +3,19 @@ import { ActionService } from './action';
 import { mock } from 'jest-mock-extended';
 import { ActionRepository } from '../repository/action';
 import { DiscoveryService } from './discovery';
-import { ExecutionRepository } from '../repository/execution';
+import { CommandExecutor } from './command-executor';
 import express from 'express';
 
 const actionRepoMock = mock<ActionRepository>();
 const discoveryServiceMock = mock<DiscoveryService>();
-const executionRepoMock = mock<ExecutionRepository>();
+const commandExecutorMock = mock<CommandExecutor>();
 
 const mockRes = mock<express.Response>();
 
 const actionService = new ActionService(
   actionRepoMock,
   discoveryServiceMock,
-  executionRepoMock,
+  commandExecutorMock,
 );
 
 describe('ActionService', () => {
@@ -56,12 +56,19 @@ describe('ActionService', () => {
       } as any);
       // @ts-ignore
       discoveryServiceMock.getDiscoveryById.mockResolvedValue(mockDiscovery);
-      executionRepoMock.getModel.mockReturnValue({
-        create: jest.fn().mockReturnValue(null),
-      } as any);
+      commandExecutorMock.execute.mockResolvedValue({
+        executionId: 1,
+        childProcess: {} as any,
+      });
 
       await actionService.executeAction(mockRes, 2, 1);
-      expect(mockRes.write).toHaveBeenCalledWith(`data: ${JSON.stringify(`> ${mockAction.cmd}`)}\n\n`);
+      expect(commandExecutorMock.execute).toHaveBeenCalledWith({
+        command: mockAction.cmd,
+        type: 'action',
+        actionId: 1,
+        discoveryId: 2,
+        response: mockRes,
+      });
     });
 
     it('should throw an error when action is not found', async () => {

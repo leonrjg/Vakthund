@@ -3,6 +3,7 @@ import Container from 'typedi';
 import app from './app';
 import { BaseRepository } from './api/repository/base';
 import { runMigrations } from './api/repository/migrations';
+import { SchedulerService } from './api/service/scheduler';
 
 const port = process.env.PORT || 18001;
 
@@ -17,6 +18,10 @@ const start = async () => {
   } catch (error) {
     console.error('Migration failed:', error);
   }
+
+  // Initialize the scheduler for periodic scans
+  const scheduler = Container.get(SchedulerService);
+  await scheduler.initialize();
 
   app.listen(port, () => {
     /* eslint-disable no-console */
