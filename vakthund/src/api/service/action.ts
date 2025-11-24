@@ -68,7 +68,7 @@ export class ActionService {
       const success = code === 0;
 
       this.executionRepo.getModel().create({
-        'action_id': id, 'discovery_id': targetId, 'execution_date': new Date(), 'success': success, 'result': result
+        'action_id': id, 'discovery_id': targetId, 'execution_date': new Date(), 'success': success, 'result': result, 'type': 'action', 'status': success ? 'completed' : 'failed'
       });
 
       res.end();

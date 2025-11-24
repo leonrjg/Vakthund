@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import {StarBorder} from "@mui/icons-material";
 import {Link} from "react-router-dom";
 
-const pages = ['Devices', 'Settings'];
+const pages = ['Devices', 'Logs', 'Settings'];
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);

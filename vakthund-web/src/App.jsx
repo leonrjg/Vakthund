@@ -5,6 +5,7 @@ import ErrorNotFound from "./components/ErrorNotFound";
 import Footer from "./components/Footer";
 import Devices from "./components/device/Devices";
 import Settings from "./components/Settings";
+import Logs from "./components/Logs";
 import ManageDevice from "./components/device/ManageDevice";
 import ManageAction from "./components/device/ManageAction";
 import ManageDiscovery from "./components/discovery/Manage";
@@ -28,6 +29,7 @@ function App() {
                             <Route path="/devices/actions/:id" element={<ManageAction/>}/>
                             <Route path="/devices/actions/new" element={<ManageAction/>}/>
                             <Route path="/settings" element={<Settings/>}/>
+                            <Route path="/logs" element={<Logs/>}/>
                             <Route path="/" element={<Home/>}/>
                             <Route path="*" element={<ErrorNotFound/>}/>
                         </Routes>
