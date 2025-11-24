@@ -3,7 +3,6 @@ import os
 import traceback
 from datetime import datetime
 from typing import List
-from shutil import copyfile
 
 import requests
 
@@ -25,7 +24,7 @@ def insert(items: List[Item], device_id: int) -> None:
         try:
             status = "Updating" if existing_discovery else "Inserting"
             print(f"{status} discovery ({r.url})")
-            tags = ','.join(r.tags) if r.tags else ''
+            tags = ','.join([str(t) for t in r.tags]) if r.tags else ''
             new_discovery = Discovery.insert(url=r.url,
                                              ip=r.ip,
                                              device_id=device_id,
@@ -48,8 +47,7 @@ def insert(items: List[Item], device_id: int) -> None:
                                  timeout=10).raise_for_status()
                     print(f"Executed action {action.id} '{action.title}' for device {device_id}")
                 except requests.exceptions.RequestException:
-                    print(
-                        f"Failed to execute action {action.id} '{action.title}' for device {device_id}: {traceback.format_exc()}")
+                    print(f"Failed to execute action {action.id} '{action.title}' for device {device_id}: {traceback.format_exc()}")
 
 
 def get_engine_config(engine: str) -> tuple:

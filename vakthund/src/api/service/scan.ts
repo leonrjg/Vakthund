@@ -1,20 +1,30 @@
 import { Inject, Service } from 'typedi';
-import { exec, ChildProcess } from 'child_process';
+import { ChildProcess } from 'child_process';
 import express from 'express';
 import { ExecutionRepository } from '../repository/execution';
-import path from 'path';
+import { CommandExecutor } from './command-executor';
+
+const ENGINE_PATH = process.env.ENGINE_PATH || '/app/engine/main.py';
 
 @Service()
 export class ScanService {
+  static getScanCommand(): string {
+    return `python3 ${ENGINE_PATH}`;
+  }
+  private executionRepo: ExecutionRepository;
 
-  executionRepo: ExecutionRepository;
+  private commandExecutor: CommandExecutor;
 
   private runningProcess: ChildProcess | null = null;
 
   private runningExecutionId: number | null = null;
 
-  constructor(@Inject() executionRepo: ExecutionRepository) {
+  constructor(
+    @Inject() executionRepo: ExecutionRepository,
+    @Inject() commandExecutor: CommandExecutor,
+  ) {
     this.executionRepo = executionRepo;
+    this.commandExecutor = commandExecutor;
   }
 
   isRunning = (): boolean => {
@@ -30,55 +40,24 @@ export class ScanService {
       throw new Error('A scan is already running');
     }
 
-    // Create execution record first
-    const execution = await this.executionRepo.getModel().create({
-      execution_date: new Date(),
-      success: false,
-      result: '',
+    this.echo(res, '> Starting scan...');
+
+    const { executionId, childProcess } = await this.commandExecutor.execute({
+      command: ScanService.getScanCommand(),
       type: 'scan',
-      status: 'running',
+      response: res,
+      onStart: (id) => {
+        this.runningExecutionId = id;
+      },
+      onClose: () => {
+        this.runningProcess = null;
+        this.runningExecutionId = null;
+      },
     });
 
-    this.runningExecutionId = execution.id;
+    this.runningProcess = childProcess;
 
-    let result = '';
-
-    // Determine engine path - in Docker it's at /app/engine, locally it's relative to project root
-    const enginePath = process.env.ENGINE_PATH || '/app/engine/main.py';
-    const cmd = `python3 ${enginePath}`;
-
-    result += this.echo(res, `> Starting scan...`);
-    result += this.echo(res, `> ${cmd}`);
-
-    this.runningProcess = exec(cmd, { windowsHide: true });
-
-    this.runningProcess.stdout?.on('data', (data) => {
-      result += this.echo(res, data.toString().trim());
-    });
-
-    this.runningProcess.stderr?.on('data', (data) => {
-      result += this.echo(res, data.toString().trim());
-    });
-
-    this.runningProcess.on('close', async (code) => {
-      const success = code === 0;
-
-      await this.executionRepo.getModel().update(
-        {
-          success,
-          result,
-          status: success ? 'completed' : 'failed',
-        },
-        { where: { id: execution.id } }
-      );
-
-      this.runningProcess = null;
-      this.runningExecutionId = null;
-
-      res.end();
-    });
-
-    return execution.id;
+    return executionId;
   };
 
   streamExecution = async (res: express.Response, executionId: number) => {
@@ -105,14 +84,12 @@ export class ScanService {
       this.echo(res, 'Scan is currently running. Please wait...');
       res.end();
     } else {
-      this.echo(res, 'Execution status: ' + execution.status);
+      this.echo(res, `Execution status: ${execution.status}`);
       res.end();
     }
   };
 
-  private echo(response: express.Response, buffer: string): string {
+  private echo(response: express.Response, buffer: string): void {
     response.write(`data: ${JSON.stringify(buffer)}\n\n`);
-    return buffer + '\n';
   }
-
 }
