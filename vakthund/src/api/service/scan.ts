@@ -100,11 +100,8 @@ export class ScanService {
       return;
     }
 
-    // If this is the running execution, we need to attach to the running process
-    // This is a simplification - in production you might want to use a more robust streaming solution
+    // If this is the running execution, we would need to attach to the running process ideally
     if (this.runningExecutionId === executionId && this.runningProcess) {
-      // The process is already streaming to the original response
-      // For now, just indicate it's running
       this.echo(res, 'Scan is currently running. Please wait...');
       res.end();
     } else {
