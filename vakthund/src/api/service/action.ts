@@ -1,25 +1,25 @@
 import { Inject, Service } from 'typedi';
 import { ActionRepository } from '../repository/action';
-import { exec } from 'child_process';
 import express from 'express';
 import { DiscoveryService } from './discovery';
-import { ExecutionRepository } from '../repository/execution';
+import { CommandExecutor } from './command-executor';
 
 @Service()
 export class ActionService {
+  private actionRepo: ActionRepository;
 
-  actionRepo: ActionRepository;
+  private discoveryService: DiscoveryService;
 
-  discoveryService: DiscoveryService;
+  private commandExecutor: CommandExecutor;
 
-  executionRepo: ExecutionRepository;
-
-  constructor(@Inject() actionRepo: ActionRepository,
+  constructor(
+    @Inject() actionRepo: ActionRepository,
     @Inject() discoveryService: DiscoveryService,
-    @Inject() executionRepo: ExecutionRepository) {
+    @Inject() commandExecutor: CommandExecutor,
+  ) {
     this.actionRepo = actionRepo;
-    this.executionRepo = executionRepo;
     this.discoveryService = discoveryService;
+    this.commandExecutor = commandExecutor;
   }
 
   executeAction = async (res: express.Response, targetId: number, id: number, prompt?: string) => {
@@ -50,28 +50,12 @@ export class ActionService {
       },
     );
 
-    let result = "";
-
-    result += this.echo(res, `> ${cmd}`);
-
-    const childProcess = exec(cmd, { windowsHide: true });
-
-    childProcess.stdout?.on('data', (data) => {
-      result += this.echo(res, data.toString().trim());
-    });
-
-    childProcess.stderr?.on('data', (data) => {
-      result += this.echo(res, data.toString().trim());
-    });
-
-    childProcess.on('close', (code) => {
-      const success = code === 0;
-
-      this.executionRepo.getModel().create({
-        'action_id': id, 'discovery_id': targetId, 'execution_date': new Date(), 'success': success, 'result': result
-      });
-
-      res.end();
+    await this.commandExecutor.execute({
+      command: cmd,
+      type: 'action',
+      actionId: id,
+      discoveryId: targetId,
+      response: res,
     });
   };
 
@@ -98,16 +82,4 @@ export class ActionService {
       action?.save();
     });
   };
-
-  /**
-   * Sends a Server Side Event containing the CLI output so far.
-   *
-   * @param {any} response - the response object
-   * @param {any} buffer - the buffer to be sent
-   */
-  private echo(response: any, buffer: any): string {
-    response.write(`data: ${JSON.stringify(buffer)}\n\n`);
-    return buffer;
-  }
-
 }

@@ -4,10 +4,22 @@ import * as fs from 'fs';
 
 @Service()
 export class SettingsService {
-  
+
   configSample = path.join(__dirname, '../../../config/vk-config-sample.json');
 
   config = path.join(__dirname, '../../../data/vk-config.json');
+
+  private deepMerge(target: any, source: any): any {
+    const result = { ...target };
+    for (const key of Object.keys(source)) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        result[key] = this.deepMerge(target[key] || {}, source[key]);
+      } else {
+        result[key] = source[key];
+      }
+    }
+    return result;
+  }
 
   getSettings = async () => {
     const structure = fs.readFileSync(this.configSample, 'utf-8');
@@ -19,8 +31,8 @@ export class SettingsService {
       userData = '{}';
     }
 
-    // Set the user config values (vk-config.json) to the base config structure (vk-config-sample.json)
-    return Object.assign(JSON.parse(structure), JSON.parse(userData));
+    // Deep merge user config values (vk-config.json) with the base config structure (vk-config-sample.json)
+    return this.deepMerge(JSON.parse(structure), JSON.parse(userData));
 
 
   };

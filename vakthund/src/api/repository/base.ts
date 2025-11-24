@@ -45,6 +45,7 @@ export class BaseRepository {
 
       ExecutionMap(this.conn);
       Execution.belongsTo(Action, { foreignKey: 'action_id', onDelete: 'CASCADE' });
+      Execution.belongsTo(Discovery, { foreignKey: 'discovery_id', onDelete: 'CASCADE' });
 
       this.conn.sync();
     }

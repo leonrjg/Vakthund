@@ -21,5 +21,8 @@ FROM nginx:alpine
 # Copy built assets from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# Copy custom nginx config for SPA routing
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Command to run nginx
 CMD ["nginx", "-g", "daemon off;"]

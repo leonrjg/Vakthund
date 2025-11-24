@@ -5,7 +5,10 @@ import {getAllDiscoveries, getDiscoveryDetail} from "../../redux/actions/Actions
 import {Button, Card, Chip, Grid, Option, Select, Table} from "@mui/joy";
 import FormLabel from "@mui/joy/FormLabel";
 import {CallToActionOutlined, Delete} from "@mui/icons-material";
-import {TextareaAutosize} from "@mui/material";
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs/components/prism-core';
+import 'prismjs/components/prism-json';
+import 'prismjs/themes/prism.css';
 import {getActionExecuteURL, getDiscoveryURL} from "../../redux/types/Types";
 import axios from "axios";
 import Box from "@mui/material/Box";
@@ -91,11 +94,18 @@ function View() {
                     <p style={{whiteSpace: "pre-line"}}>{actionOutput}</p>
                 </Card>
             </Grid>
-            <Grid item sm={3} className={"mb-1"} style={{height: "500px"}}>
-                <Card className={"bg-light"} style={{height: "500px"}}>
+            <Grid item sm={3} className={"mb-1 d-flex"} style={{height: "500px"}}>
+                <Card className={"bg-light"} style={{height: "100%", display: "flex", flexDirection: "column", width: "100%"}}>
                     <FormLabel>Full info</FormLabel>
-                    <TextareaAutosize style={{overflow: "auto"}}
-                                      value={JSON.stringify(JSON.parse(selector.details?.full_data || '{}'), null, 4)}></TextareaAutosize>
+                    <div style={{overflow: "auto", flex: 1}}>
+                        <Editor
+                            value={JSON.stringify(JSON.parse(selector.details?.full_data || '{}'), null, 4)}
+                            onValueChange={() => {}}
+                            highlight={code => highlight(code, languages.json)}
+                            padding={10}
+                            style={{pointerEvents: "none", fontFamily: "monospace"}}
+                        />
+                    </div>
                 </Card>
             </Grid>
             <Grid container className="m-3 justify-content-center">
