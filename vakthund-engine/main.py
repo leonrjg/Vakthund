@@ -11,10 +11,9 @@ from db import Discovery, Query, Action, db_type
 from entities.item import Item
 from util import get_project_dir
 
-VK_BACKEND_URL = 'http://localhost:18001/api'
+VK_BACKEND_URL = os.environ.get('VK_BACKEND_URL') or 'http://localhost:18001/api'
 CONFIG_DIR = f'{get_project_dir()}../data'
 CONFIG_FILE = f'{CONFIG_DIR}/vk-config.json'
-MAX_ACTIONS_PER_QUERY = 10
 
 
 def insert(items: List[Item], device_id: int) -> None:
@@ -39,15 +38,16 @@ def insert(items: List[Item], device_id: int) -> None:
             traceback.print_exc()
             continue
 
-        if not existing_discovery and count < MAX_ACTIONS_PER_QUERY:
-            device_actions = Action.select().where(Action.device_id == device_id, Action.execute_on_discovery == True)
+        if not existing_discovery:
+            device_actions = Action.select().where(((Action.device_id.is_null(True)) | (Action.device_id == device_id)) & (Action.execute_on_discovery == True))
             for action in device_actions:
                 try:
                     requests.get(f'{VK_BACKEND_URL}/discovery/{new_discovery}/action/{action.id}',
                                  timeout=10).raise_for_status()
                     print(f"Executed action {action.id} '{action.title}' for device {device_id}")
                 except requests.exceptions.RequestException:
-                    print(f"Failed to execute action {action.id} '{action.title}' for device {device_id}: {traceback.format_exc()}")
+                    print(
+                        f"Failed to execute action {action.id} '{action.title}' for device {device_id}: {traceback.format_exc()}")
 
 
 def get_engine_config(engine: str) -> tuple:
