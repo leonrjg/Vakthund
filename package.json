@@ -1,0 +1,30 @@
+{
+  "name": "vakthund",
+  "version": "0.5.0",
+  "private": true,
+  "workspaces": [
+    "vakthund",
+    "vakthund-web"
+  ],
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:api": "npm run dev --workspace=vakthund",
+    "dev:web": "npm run dev --workspace=vakthund-web",
+    "build": "npm-run-all build:*",
+    "build:api": "npm run build --workspace=vakthund",
+    "build:web": "npm run build --workspace=vakthund-web",
+    "start": "npm-run-all --parallel start:*",
+    "start:api": "npm run start --workspace=vakthund",
+    "start:web": "npm run serve --workspace=vakthund-web",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=7.0.0"
+  }
+}

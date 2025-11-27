@@ -84,6 +84,17 @@ export class DiscoveryService {
     return this.discoveryRepo.getModel().create(toModel(discovery));
   };
 
+  editDiscovery = async (id: number, body: any) => {
+    const discovery = await this.getDiscoveryById(id);
+    discovery?.set(body);
+    await discovery?.save();
+    // Return discovery with relations included
+    return this.discoveryRepo.getModel().findOne({
+      where: { id: id },
+      include: [{ model: Device }],
+    });
+  };
+
   deleteDiscovery = async (discoveryId: number) => {
     let discovery = await this.getDiscoveryById(discoveryId);
     return discovery?.destroy();

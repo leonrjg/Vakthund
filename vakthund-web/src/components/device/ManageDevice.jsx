@@ -68,7 +68,6 @@ function ManageDevice() {
     return (
         <div>
             <h2 className={"d-inline"}>Devices -> {params.id ? `Edit device ${state.nameValue}` : "New device"}</h2>
-            <Link as={Link} to="/devices/actions/new"><Button className="d-inline mx-1 float-end" variant="solid" color={"warning"}>+ Add action</Button></Link>
             <div className={"card shadow my-3"}>
                 <div className={"card-body"}>
                     <form onSubmit={async (e) => {

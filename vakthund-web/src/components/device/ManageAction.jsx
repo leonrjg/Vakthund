@@ -23,6 +23,10 @@ async function sendAction(id, data) {
     );
 }
 
+async function deleteAction(id) {
+    return (await axios.delete(getActionURL(id), {headers: {'Content-Type': 'application/json'}})).status === 200;
+}
+
 function ManageAction() {
     const [state, setState] = useState({});
     const pushToState = (obj) => {
@@ -51,6 +55,22 @@ function ManageAction() {
     return (
         <div>
             <h2 className={"d-inline"}>Devices -> {params.id ? `Edit action ${state.titleValue}` : "New action"}</h2>
+            {params.id ? (
+                <Button
+                    className="d-inline mx-1 float-end"
+                    variant="solid"
+                    color="danger"
+                    onClick={async () => {
+                        if (!window.confirm("Are you sure you want to delete this action?")) {
+                            return;
+                        }
+                        await deleteAction(params.id);
+                        navigate('/devices');
+                    }}
+                >
+                    Delete
+                </Button>
+            ) : null}
             <div className={"card my-3"}>
                 <div className={"card-body"}>
                     <form onSubmit={async (e) => {

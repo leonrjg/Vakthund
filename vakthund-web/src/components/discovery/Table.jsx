@@ -21,12 +21,12 @@ const Table = ({lst}) => {
         {
             field: "last_updated",
             sort: "desc",
-            minWidth: 100,
+            minWidth: 60,
             flex: 1
         },
         {
             field: "url",
-            minWidth: 200,
+            minWidth: 150,
             flex: 2
         },
         {
@@ -36,11 +36,12 @@ const Table = ({lst}) => {
                     <Chip color={"primary"}>{params.data.Device?.name}</Chip>
                 </Link>
             },
+            minWidth: 60,
             flex: 1
         },
         {
             field: "tags",
-            minWidth: 100,
+            minWidth: 200,
             cellRenderer: params => {
                 return params.data.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Chip color={"neutral"} className={"me-1"}>{tag}</Chip></Link>)
             },

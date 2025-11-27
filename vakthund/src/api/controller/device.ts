@@ -12,6 +12,10 @@ router.get<{}, any>('/all', async (req, res) => {
   res.json(await deviceService.getDevices());
 });
 
+router.get<{}, any>('/action/all', async (req, res) => {
+  res.json(await actionService.getActions());
+});
+
 router.post<{}, any>('/action', async (req, res) => {
   res.json(await actionService.postAction(req.body));
 });
@@ -24,6 +28,11 @@ router.get<{}, any>('/action/:id', async (req, res) => {
 router.put<{}, any>('/action/:id', async (req, res) => {
   // @ts-ignore
   res.json(await actionService.putAction(req.params.id, req.body));
+});
+
+router.delete<{}, any>('/action/:id', async (req, res) => {
+  // @ts-ignore
+  res.json(await actionService.deleteAction(req.params.id));
 });
 
 router.get<{}, any>('/:id', async (req, res) => {
