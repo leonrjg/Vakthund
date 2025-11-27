@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Sheet from '@mui/joy/Sheet';
-import {Button, Divider, Input, List, ListItem, ListItemButton, ListItemDecorator, Switch} from "@mui/joy";
+import {Button, Card, CardContent, Divider, Input, List, ListItem, ListItemButton, ListItemDecorator, Switch, Typography} from "@mui/joy";
 import axios from "axios";
 import {DEVICE_URL, getDeviceURL} from "../../redux/types/Types";
 import {Link, useNavigate, useParams} from "react-router-dom";
@@ -11,6 +11,7 @@ import {useEffectOnce} from "react-use";
 import {getDevices, getSettings} from "../../redux/actions/Actions";
 import {Close} from "@mui/icons-material";
 import {useDispatch, useSelector} from "react-redux";
+import Box from "@mui/material/Box";
 
 
 async function sendRequest(sendFunction, url, data) {
@@ -66,10 +67,10 @@ function ManageDevice() {
     })
 
     return (
-        <div>
-            <h2 className={"d-inline"}>Devices -> {params.id ? `Edit device ${state.nameValue}` : "New device"}</h2>
-            <div className={"card shadow my-3"}>
-                <div className={"card-body"}>
+        <Box>
+            <Typography level="h2">Devices -> {params.id ? `Edit device ${state.nameValue}` : "New device"}</Typography>
+            <Card sx={{ my: 3, boxShadow: 1 }}>
+                <CardContent>
                     <form onSubmit={async (e) => {
                         if (e.target.checkValidity()) {
                             e.preventDefault();
@@ -94,7 +95,7 @@ function ManageDevice() {
                                     }
                                     return <FormControl>
                                             <Sheet variant="soft" sx={{p: 2, mb: 1}}>
-                                            <Close onClick={async () => { updateQuery(i, null) }} className={"float-end ms-5 mb-5"}/>
+                                            <Close onClick={async () => { updateQuery(i, null) }} sx={{ float: 'right', ml: 5, mb: 5 }}/>
                                             <FormLabel>Query</FormLabel>
                                             <Input required value={queries[i]?.query}
                                                    onChange={e => {query.query = e.target.value; updateQuery(i, query)}} placeholder="Query"
@@ -117,7 +118,7 @@ function ManageDevice() {
                                     <List aria-labelledby="decorated-list-demo">
                                         {state.actionsValue?.map((action, index) => (
                                             <Link to={"/devices/actions/" + action.id} style={{textDecoration: "none"}}>
-                                                <ListItem className={"mb-1"}>
+                                                <ListItem sx={{ mb: 1 }}>
                                                     <ListItemButton variant={"outlined"}>
                                                         <ListItemDecorator>⌘</ListItemDecorator> {action.title}
                                                     </ListItemButton>
@@ -129,13 +130,14 @@ function ManageDevice() {
                             </FormControl>
                             : <></>}
                         <FormControl>
-                            <Button type="submit"
-                                    className={"float-end mt-3"}>{params.id ? "Update" : "Create"}</Button>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                <Button type="submit">{params.id ? "Update" : "Create"}</Button>
+                            </Box>
                         </FormControl>
                     </form>
-                </div>
-            </div>
-        </div>
+                </CardContent>
+            </Card>
+        </Box>
     );
 }
 

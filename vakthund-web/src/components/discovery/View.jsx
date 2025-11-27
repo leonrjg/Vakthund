@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllDiscoveries, getDiscoveryDetail, updateDiscoveryTags, updateDiscoveryField} from "../../redux/actions/Actions";
-import {Button, Card, Chip, ChipDelete, Grid, IconButton, Input, Option, Select, Table} from "@mui/joy";
+import {Button, Card, Chip, ChipDelete, IconButton, Input, Option, Select, Table, Typography} from "@mui/joy";
+import Grid from "@mui/material/Grid";
 import FormLabel from "@mui/joy/FormLabel";
 import {Add, CallToActionOutlined, Close, Delete} from "@mui/icons-material";
 import Editor from 'react-simple-code-editor';
@@ -129,9 +130,9 @@ function View() {
     };
 
     return (
-        <Grid container spacing={2} className="m-3 justify-content-center">
-            <Grid item sm={3} className={"mb-1"} style={{height: "500px"}}>
-                <Card className={"h-100 bg-light"} style={{overflow: "auto"}}>
+        <Grid container spacing={2}>
+            <Grid item xs={12} md={3} sx={{ height: '500px' }}>
+                <Card variant="soft" color="neutral" sx={{ height: '100%', overflow: 'auto' }}>
                     <FormLabel>IP</FormLabel>
                     {editingIp ? (
                         <Input
@@ -154,7 +155,7 @@ function View() {
                             {selector.details?.ip || <em>Click to add IP</em>}
                         </Box>
                     )}
-                    <FormLabel>URL</FormLabel>
+                    <FormLabel>URL <PingButton url={selector.details?.url} sx={{ height: '100%', verticalAlign: 'bottom' }}/></FormLabel>
                     {editingUrl ? (
                         <Input
                             size="sm"
@@ -219,7 +220,6 @@ function View() {
                     </Box>
                     <FormLabel>Management</FormLabel>
                     <Box>
-                        <PingButton url={selector.details?.url} style={{"height": "100%", "vertical-align": "bottom"}}/>
                         <Button color={"danger"} startDecorator={<Delete/>} onClick={async () => {
                             if (!window.confirm("Are you sure you want to delete this discovery?")) {
                                 return;
@@ -231,23 +231,29 @@ function View() {
                     </Box>
                 </Card>
             </Grid>
-            <Grid item sm={6} className={"d-flex flex-column"} style={{height: "500px"}}>
+            <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', height: '500px' }}>
                <Select color="success" disabled={selector.actions?.length === 0}
                                 startDecorator={<CallToActionOutlined/>} placeholder="Execute an action" size="lg"
-                                className={"mb-1"} variant="outlined"
+                                sx={{ mb: 1 }} variant="outlined"
                                 onChange={executeAction}>
                             {selector.actions?.map((action) => (
                                 <Option value={action.id}>{action.title}</Option>
                             ))}
                 </Select>
-                <Card className={"h-100 bg-dark text-white-50 overflow-auto display-flex flex-column-reverse"}>
-                    <p style={{whiteSpace: "pre-line"}}>{actionOutput}</p>
+                <Card variant="solid" color="neutral" sx={{
+                    height: '100%',
+                    color: 'rgba(255,255,255,0.5)',
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column-reverse'
+                }}>
+                    <Typography sx={{ whiteSpace: 'pre-line' }}>{actionOutput}</Typography>
                 </Card>
             </Grid>
-            <Grid item sm={3} className={"mb-1 d-flex"} style={{height: "500px"}}>
-                <Card className={"bg-light"} style={{height: "100%", display: "flex", flexDirection: "column", width: "100%"}}>
+            <Grid item xs={12} md={3} sx={{ display: 'flex', height: '500px' }}>
+                <Card variant="soft" color="neutral" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
                     <FormLabel>Full info</FormLabel>
-                    <div style={{overflow: "auto", flex: 1}}>
+                    <Box sx={{ overflow: 'auto', flex: 1 }}>
                         <Editor
                             value={JSON.stringify(JSON.parse(selector.details?.full_data || '{}'), null, 4)}
                             onValueChange={() => {}}
@@ -255,15 +261,14 @@ function View() {
                             padding={10}
                             style={{pointerEvents: "none", fontFamily: "monospace"}}
                         />
-                    </div>
+                    </Box>
                 </Card>
             </Grid>
-            <Grid container className="m-3 justify-content-center">
-                <Grid item sm={12} className={"d-flex flex-column bg-light mt-3"}>
-                    <Table className={"text-center mt-3"} bordered hover>
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', bgcolor: 'neutral.50', mt: 3 }}>
+                    <Table sx={{ textAlign: 'center', mt: 3 }} borderAxis="both" hoverRow>
                         <thead>
                         <tr>
-                            <th colSpan={4} style={{fontWeight: "100", lineHeight: "10px", textAlign: "center"}}>EXECUTION LOGS</th>
+                            <th colSpan={4} style={{fontWeight: 100, lineHeight: '10px', textAlign: 'center'}}>EXECUTION LOGS</th>
                         </tr>
                         <tr>
                             <th>Date</th>
@@ -284,7 +289,6 @@ function View() {
                         ))}
                         </tbody>
                     </Table>
-                </Grid>
             </Grid>
         </Grid>
     );

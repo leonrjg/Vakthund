@@ -22,11 +22,11 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="static" color={"default"} sx={{"backgroundColor": "#414141"}}>
-            <Container maxWidth="xl">
+        <AppBar position="static" sx={{ backgroundColor: "#414141", boxShadow: 'none', m: 0 }}>
+            <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3 } }}>
                 <Toolbar disableGutters>
                     <Link to={"/"} style={{textDecoration: "none", color: "unset"}}>
-                    <img src="/vakthund.svg" style={{"width":"30px", "mix-blend-mode": "softlight", "vertical-align": "top"}} />
+                    <img src="/vakthund.svg" style={{width:"30px", mixBlendMode: "softlight", verticalAlign: "top"}} />
                     <Typography
                         variant="h6"
                         noWrap
