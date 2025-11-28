@@ -23,7 +23,7 @@ def insert(items: List[Item], device_id: int) -> None:
         try:
             status = "Updating" if existing_discovery else "Inserting"
             print(f"{status} discovery ({r.url})")
-            tags = ','.join([str(t) for t in r.tags]) if r.tags else ''
+            tags = ','.join([str(t) for t in r.tags if t]) if r.tags else ''
             new_discovery = Discovery.insert(url=r.url,
                                              ip=r.ip,
                                              device_id=device_id,
@@ -50,13 +50,11 @@ def insert(items: List[Item], device_id: int) -> None:
                         f"Failed to execute action {action.id} '{action.title}' for device {device_id}: {traceback.format_exc()}")
 
 
-def get_engine_config(engine: str) -> tuple:
+def get_engine_config(engine: str) -> dict:
     with open(CONFIG_FILE, 'r') as f:
         json_config = json.load(f)
-        engines = {k.lower(): v for k, v in json_config['engines'].items()}
-        api_key = engines[engine]['api_key']
-        tag_attributes = engines[engine].get('tag_attributes') or []
-        return api_key, tag_attributes
+        engines = {k.lower(): v for k, v in json_config['scan']['engines'].items()}
+        return engines[engine]
 
 
 def run_engine():
@@ -69,11 +67,7 @@ def run_engine():
     for s in searches:
         print(f'Searching: "{s.query}" @ {s.engine}')
         engine_name = s.engine.lower()
-        try:
-            api_key, tag_attributes = get_engine_config(engine_name)
-        except KeyError:
-            print(f"API key is missing from config file {CONFIG_FILE} or the file is malformed")
-            continue
+        config = get_engine_config(engine_name)
 
         try:
             engine = getattr(engines, f"_{engine_name}")
@@ -82,7 +76,7 @@ def run_engine():
             continue
 
         try:
-            results = engine.search(api_key, s.query, tag_attributes)
+            results = engine.search(s.query, config)
         except Exception:
             print(f"Query {s.query} failed: {traceback.format_exc()}")
             continue

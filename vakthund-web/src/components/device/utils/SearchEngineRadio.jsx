@@ -11,7 +11,8 @@ import {getSettings} from "../../../redux/actions/Actions";
 import {useEffectOnce} from "react-use";
 
 export function GetSearchEngineRadio(onChangeRadioCallback, defaultEngine, settings) {
-    let engines = Object.keys(settings?.engines);
+    console.log(settings);
+    let engines = Object.keys(settings?.scan.engines);
     return (
         <>
             <FormLabel>Select a search engine for this query</FormLabel>
@@ -37,7 +38,7 @@ export function GetSearchEngineRadio(onChangeRadioCallback, defaultEngine, setti
                             }}
                         />
                         <Avatar alt={`${engine}`}>
-                            <img alt={`${engine}`} src={settings.engines[engine].icon} style={{maxWidth: "32px"}} />
+                            <img alt={`${engine}`} src={settings.scan.engines[engine].icon} style={{maxWidth: "32px"}} />
                         </Avatar>
                         <Typography level="body-sm" sx={{mt: 1}}>{engine}</Typography>
                     </Sheet>

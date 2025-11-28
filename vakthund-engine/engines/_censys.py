@@ -9,7 +9,10 @@ from util import get_attr_by_path, get_project_dir
 from entities.item import Item
 
 
-def search(api_key: str, query: str, tag_attributes: List[str]) -> list[Item]:
+def search(query: str, config: dict) -> List[Item]:
+    api_key = config.get('api_key')
+    tag_attributes: List[str] = config.get('tag_attributes', [])
+
     with SDK(
         personal_access_token=api_key,
     ) as sdk:
