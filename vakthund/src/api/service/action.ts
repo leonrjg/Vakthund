@@ -3,6 +3,7 @@ import { ActionRepository } from '../repository/action';
 import express from 'express';
 import { DiscoveryService } from './discovery';
 import { CommandExecutor } from './command-executor';
+import Device from '../repository/models/device';
 
 @Service()
 export class ActionService {
@@ -59,6 +60,12 @@ export class ActionService {
     });
   };
 
+  getActions = async () => {
+    return this.actionRepo.getModel().findAll({
+      include: [{ model: Device, required: false }],
+    });
+  };
+
   getActionById = async (id: number) => {
     return this.actionRepo.getModel().findOne({
       where: {
@@ -81,5 +88,9 @@ export class ActionService {
       action?.set(body);
       action?.save();
     });
+  };
+
+  deleteAction = async (id: number) => {
+    return this.actionRepo.getModel().destroy({ where: { id: id } });
   };
 }

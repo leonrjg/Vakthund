@@ -6,6 +6,7 @@ import {
     DISCOVERY_ALL_URL,
     DISCOVERY_DETAIL,
     DISCOVERY_DETAIL_URL,
+    DISCOVERY_UPDATE,
     SETTINGS,
     SETTINGS_URL,
     SYSTEM_LOGS,
@@ -14,6 +15,8 @@ import {
     ACTION_LOGS_URL,
     SCAN_STATUS,
     SCAN_STATUS_URL,
+    ACTIONS_ALL,
+    ACTION_ALL_URL,
 } from "../types/Types";
 
 export const getAllDiscoveries = () => {
@@ -34,10 +37,31 @@ export const getDiscoveryDetail = (id) => {
     };
 };
 
+export const updateDiscoveryTags = (id, tags) => {
+    return async (dispatch) => {
+        const res = await axios.put(DISCOVERY_DETAIL_URL(id), { tags });
+        dispatch({type: DISCOVERY_UPDATE, discovery: res.data});
+    };
+};
+
+export const updateDiscoveryField = (id, field, value) => {
+    return async (dispatch) => {
+        const res = await axios.put(DISCOVERY_DETAIL_URL(id), { [field]: value });
+        dispatch({type: DISCOVERY_UPDATE, discovery: res.data});
+    };
+};
+
 export const getDevices = () => {
     return async (dispatch) => {
         const res = await axios.get(DEVICE_ALL_URL);
         dispatch({type: DEVICE_ALL, devices: res.data});
+    };
+};
+
+export const getActions = () => {
+    return async (dispatch) => {
+        const res = await axios.get(ACTION_ALL_URL);
+        dispatch({type: ACTIONS_ALL, actions: res.data});
     };
 };
 

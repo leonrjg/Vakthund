@@ -1,9 +1,10 @@
 {
   "name": "vakthund",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "",
   "main": "src/index.ts",
   "scripts": {
+    "dev": "ts-node src/index.ts",
     "start": "pm2 --no-daemon start dist/index.js",
     "build": "tsc",
     "lint": "eslint --fix src test",

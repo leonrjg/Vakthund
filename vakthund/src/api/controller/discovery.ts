@@ -32,6 +32,11 @@ router.post<{}, any>('/', async (req, res) => {
   res.json(await discoveryService.newDiscovery(toModel(req.body)));
 });
 
+router.put<{}, any>('/:id', async (req, res) => {
+  // @ts-ignore
+  res.json(await discoveryService.editDiscovery(parseInt(req.params.id), req.body));
+});
+
 router.delete<{}, any>('/:id', async (req, res) => {
   // @ts-ignore
   res.json(await discoveryService.deleteDiscovery(req.params.id));

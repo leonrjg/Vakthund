@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllDiscoveries, getDiscoveryDetail} from "../../redux/actions/Actions";
-import {Button, Card, Chip, Grid, Option, Select, Table} from "@mui/joy";
+import {getAllDiscoveries, getDiscoveryDetail, updateDiscoveryTags, updateDiscoveryField} from "../../redux/actions/Actions";
+import {Button, Card, Chip, ChipDelete, IconButton, Input, Option, Select, Table, Typography} from "@mui/joy";
+import Grid from "@mui/material/Grid";
 import FormLabel from "@mui/joy/FormLabel";
-import {CallToActionOutlined, Delete} from "@mui/icons-material";
+import {Add, CallToActionOutlined, Close, Delete} from "@mui/icons-material";
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-json';
@@ -22,6 +23,12 @@ function View() {
     const params = useParams();
     const dispatch = useDispatch();
     const [actionOutput, setActionOutput] = useState("");
+    const [addingTag, setAddingTag] = useState(false);
+    const [newTagValue, setNewTagValue] = useState("");
+    const [editingIp, setEditingIp] = useState(false);
+    const [ipValue, setIpValue] = useState("");
+    const [editingUrl, setEditingUrl] = useState(false);
+    const [urlValue, setUrlValue] = useState("");
 
     useEffect(() => {
         dispatch(getDiscoveryDetail(params.id));
@@ -58,18 +65,161 @@ function View() {
     const selector = (useSelector((state) => state.discovery) || {});
     const navigate = useNavigate();
 
+    const handleAddTag = () => {
+        if (!newTagValue.trim()) return;
+
+        const currentTags = selector.details?.tags ? selector.details.tags.split(",").map(t => t.trim()).filter(t => t) : [];
+        if (currentTags.includes(newTagValue.trim())) {
+            setNewTagValue("");
+            setAddingTag(false);
+            return;
+        }
+
+        const updatedTags = [...currentTags, newTagValue.trim()].join(",");
+        dispatch(updateDiscoveryTags(params.id, updatedTags));
+        setNewTagValue("");
+        setAddingTag(false);
+    };
+
+    const handleRemoveTag = (tagToRemove) => {
+        console.log("Removing tag:", tagToRemove);
+        const currentTags = selector.details?.tags ? selector.details.tags.split(",").map(t => t.trim()).filter(t => t) : [];
+        console.log("Current tags:", currentTags);
+        const updatedTags = currentTags.filter(tag => tag !== tagToRemove).join(",");
+        console.log("Updated tags:", updatedTags);
+        dispatch(updateDiscoveryTags(params.id, updatedTags));
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleAddTag();
+        } else if (e.key === 'Escape') {
+            setNewTagValue("");
+            setAddingTag(false);
+        }
+    };
+
+    const handleSaveIp = () => {
+        if (ipValue.trim()) {
+            dispatch(updateDiscoveryField(params.id, 'ip', ipValue.trim()));
+        }
+        setEditingIp(false);
+    };
+
+    const handleSaveUrl = () => {
+        if (urlValue.trim()) {
+            dispatch(updateDiscoveryField(params.id, 'url', urlValue.trim()));
+        }
+        setEditingUrl(false);
+    };
+
+    const handleIpKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSaveIp();
+        } else if (e.key === 'Escape') {
+            setEditingIp(false);
+        }
+    };
+
+    const handleUrlKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSaveUrl();
+        } else if (e.key === 'Escape') {
+            setEditingUrl(false);
+        }
+    };
+
     return (
-        <Grid container spacing={2} className="m-3 justify-content-center">
-            <Grid item sm={3} className={"mb-1"} style={{height: "500px"}}>
-                <Card className={"h-100 bg-light"} style={{overflow: "auto"}}>
-                    <FormLabel>IP</FormLabel> {selector.details?.ip}<br/>
-                    <FormLabel>URL</FormLabel> {selector.details?.url}<br/>
+        <Grid container spacing={2}>
+            <Grid item xs={12} md={3} sx={{ height: '500px' }}>
+                <Card variant="soft" color="neutral" sx={{ height: '100%', overflow: 'auto' }}>
+                    <FormLabel>IP</FormLabel>
+                    {editingIp ? (
+                        <Input
+                            size="sm"
+                            value={ipValue}
+                            onChange={(e) => setIpValue(e.target.value)}
+                            onKeyDown={handleIpKeyPress}
+                            onBlur={handleSaveIp}
+                            autoFocus
+                            sx={{ mb: 1 }}
+                        />
+                    ) : (
+                        <Box
+                            onClick={() => {
+                                setIpValue(selector.details?.ip || "");
+                                setEditingIp(true);
+                            }}
+                            sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(0,0,0,0.05)' }, p: 0.5, borderRadius: 1, mb: 1 }}
+                        >
+                            {selector.details?.ip || <em>Click to add IP</em>}
+                        </Box>
+                    )}
+                    <FormLabel>URL <PingButton url={selector.details?.url} sx={{ height: '100%', verticalAlign: 'bottom' }}/></FormLabel>
+                    {editingUrl ? (
+                        <Input
+                            size="sm"
+                            value={urlValue}
+                            onChange={(e) => setUrlValue(e.target.value)}
+                            onKeyDown={handleUrlKeyPress}
+                            onBlur={handleSaveUrl}
+                            autoFocus
+                            sx={{ mb: 1 }}
+                        />
+                    ) : (
+                        <Box
+                            onClick={() => {
+                                setUrlValue(selector.details?.url || "");
+                                setEditingUrl(true);
+                            }}
+                            sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(0,0,0,0.05)' }, p: 0.5, borderRadius: 1, mb: 1 }}
+                        >
+                            {selector.details?.url || <em>Click to add URL</em>}
+                        </Box>
+                    )}
                     <FormLabel>Device</FormLabel> <Link to={`/?query=${selector.details?.Device?.name}`}>
                     <Chip color={"primary"}>{selector.details?.Device?.name}</Chip></Link>
-                    <FormLabel>Tags</FormLabel> <Box>{selector.details?.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Chip variant={"outlined"}>{tag}</Chip></Link>)}</Box>
+                    <FormLabel>
+                        Tags
+                        <IconButton size="sm" onClick={() => setAddingTag(true)} sx={{ ml: 1 }}>
+                            <Add />
+                        </IconButton>
+                    </FormLabel>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selector.details?.tags?.split(",").filter(tag => tag.trim()).map((tag, index) => (
+                            <Chip
+                                key={index}
+                                variant="outlined"
+                                endDecorator={
+                                    <ChipDelete
+                                        onDelete={() => handleRemoveTag(tag.trim())}
+                                    />
+                                }
+                            >
+                                <Link to={`/?query=${tag.trim()}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    {tag.trim()}
+                                </Link>
+                            </Chip>
+                        ))}
+                        {addingTag && (
+                            <Input
+                                size="sm"
+                                placeholder="New tag"
+                                value={newTagValue}
+                                onChange={(e) => setNewTagValue(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                onBlur={() => {
+                                    if (!newTagValue.trim()) {
+                                        setAddingTag(false);
+                                    }
+                                }}
+                                autoFocus
+                                sx={{ minWidth: '100px', maxWidth: '150px' }}
+                            />
+                        )}
+                    </Box>
                     <FormLabel>Management</FormLabel>
                     <Box>
-                        <PingButton url={selector.details?.url} style={{"height": "100%", "vertical-align": "bottom"}}/>
                         <Button color={"danger"} startDecorator={<Delete/>} onClick={async () => {
                             if (!window.confirm("Are you sure you want to delete this discovery?")) {
                                 return;
@@ -81,23 +231,29 @@ function View() {
                     </Box>
                 </Card>
             </Grid>
-            <Grid item sm={6} className={"d-flex flex-column"} style={{height: "500px"}}>
+            <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', height: '500px' }}>
                <Select color="success" disabled={selector.actions?.length === 0}
                                 startDecorator={<CallToActionOutlined/>} placeholder="Execute an action" size="lg"
-                                className={"mb-1"} variant="outlined"
+                                sx={{ mb: 1 }} variant="outlined"
                                 onChange={executeAction}>
                             {selector.actions?.map((action) => (
                                 <Option value={action.id}>{action.title}</Option>
                             ))}
                 </Select>
-                <Card className={"h-100 bg-dark text-white-50 overflow-auto display-flex flex-column-reverse"}>
-                    <p style={{whiteSpace: "pre-line"}}>{actionOutput}</p>
+                <Card variant="solid" color="neutral" sx={{
+                    height: '100%',
+                    color: 'rgba(255,255,255,0.5)',
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column-reverse'
+                }}>
+                    <Typography sx={{ whiteSpace: 'pre-line' }}>{actionOutput}</Typography>
                 </Card>
             </Grid>
-            <Grid item sm={3} className={"mb-1 d-flex"} style={{height: "500px"}}>
-                <Card className={"bg-light"} style={{height: "100%", display: "flex", flexDirection: "column", width: "100%"}}>
+            <Grid item xs={12} md={3} sx={{ display: 'flex', height: '500px' }}>
+                <Card variant="soft" color="neutral" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
                     <FormLabel>Full info</FormLabel>
-                    <div style={{overflow: "auto", flex: 1}}>
+                    <Box sx={{ overflow: 'auto', flex: 1 }}>
                         <Editor
                             value={JSON.stringify(JSON.parse(selector.details?.full_data || '{}'), null, 4)}
                             onValueChange={() => {}}
@@ -105,15 +261,14 @@ function View() {
                             padding={10}
                             style={{pointerEvents: "none", fontFamily: "monospace"}}
                         />
-                    </div>
+                    </Box>
                 </Card>
             </Grid>
-            <Grid container className="m-3 justify-content-center">
-                <Grid item sm={12} className={"d-flex flex-column bg-light mt-3"}>
-                    <Table className={"text-center mt-3"} bordered hover>
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', bgcolor: 'neutral.50', mt: 3 }}>
+                    <Table sx={{ textAlign: 'center', mt: 3 }} borderAxis="both" hoverRow>
                         <thead>
                         <tr>
-                            <th colSpan={4} style={{fontWeight: "100", lineHeight: "10px", textAlign: "center"}}>EXECUTION LOGS</th>
+                            <th colSpan={4} style={{fontWeight: 100, lineHeight: '10px', textAlign: 'center'}}>EXECUTION LOGS</th>
                         </tr>
                         <tr>
                             <th>Date</th>
@@ -134,7 +289,6 @@ function View() {
                         ))}
                         </tbody>
                     </Table>
-                </Grid>
             </Grid>
         </Grid>
     );

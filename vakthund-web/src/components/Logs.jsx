@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { getSystemLogs, getActionLogs } from "../redux/actions/Actions";
-import { Button, Card, Chip, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
+import { Button, Card, Chip, Tab, TabList, TabPanel, Tabs, Table, Typography } from "@mui/joy";
 import { SCAN_RUN_URL } from "../redux/types/Types";
+import Box from "@mui/material/Box";
 
 function Logs() {
     const dispatch = useDispatch();
@@ -93,9 +94,9 @@ function Logs() {
     };
 
     return (
-        <div>
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 className="d-inline m-0">Logs</h2>
+        <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography level="h2" sx={{ m: 0 }}>Logs</Typography>
                 <Button
                     color="success"
                     onClick={runScan}
@@ -103,7 +104,7 @@ function Logs() {
                 >
                     {isScanning ? "Scanning..." : "Run Scan"}
                 </Button>
-            </div>
+            </Box>
 
             <Tabs value={activeTab} onChange={(e, val) => setActiveTab(val)}>
                 <TabList>
@@ -114,22 +115,28 @@ function Logs() {
                 <TabPanel value={0}>
                     {/* Live scan output panel */}
                     {(isScanning || scanOutput) && (
-                        <Card className="bg-dark text-white-50 mb-3 overflow-auto display-flex flex-column-reverse" style={{ maxHeight: "300px" }}>
-                            <p style={{ whiteSpace: "pre-line", margin: 0, fontFamily: "monospace" }}>
+                        <Card variant="solid" color="neutral" sx={{
+                            color: 'rgba(255,255,255,0.5)',
+                            mb: 3,
+                            overflow: 'auto',
+                            display: 'flex',
+                            flexDirection: 'column-reverse',
+                            maxHeight: '300px'
+                        }}>
+                            <Typography sx={{ whiteSpace: 'pre-line', m: 0, fontFamily: 'monospace' }}>
                                 {scanOutput || "Starting scan..."}
-                            </p>
+                            </Typography>
                         </Card>
                     )}
 
                     {/* System logs table */}
-                    <Card className="shadow">
-                    <table className="table w-100 mb-0 text-center" style={{ tableLayout: 'fixed' }}>
+                    <Table borderAxis="both" hoverRow sx={{ textAlign: 'center', mt: 0, '& th': { py: 0.1, px: 0.5 }, '& td': { py: 0.1, px: 0.5 } }}>
                         <thead>
                             <tr>
-                                <th style={{ width: '25%' }}>Date</th>
-                                <th style={{ width: '25%' }}>Type</th>
-                                <th style={{ width: '25%' }}>Status</th>
-                                <th style={{ width: '25%' }}>Log</th>
+                                <th style={{ width: '25%', textAlign: 'center' }}>Date</th>
+                                <th style={{ width: '25%', textAlign: 'center' }}>Type</th>
+                                <th style={{ width: '25%', textAlign: 'center' }}>Status</th>
+                                <th style={{ width: '25%', textAlign: 'center' }}>Log</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -160,21 +167,19 @@ function Logs() {
                                 ))
                             )}
                         </tbody>
-                    </table>
-                    </Card>
+                    </Table>
                 </TabPanel>
 
                 <TabPanel value={1}>
-                    <Card className="shadow">
-                    <table className="table w-100 mb-0 text-center" style={{ tableLayout: 'fixed' }}>
+                    <Table borderAxis="both" hoverRow sx={{ textAlign: 'center', mt: 0, '& th': { py: 0.1, px: 1 }, '& td': { py: 0.1, px: 1 } }}>
                         <thead>
                             <tr>
-                                <th style={{ width: '16.66%' }}>Date</th>
-                                <th style={{ width: '16.66%' }}>Action</th>
-                                <th style={{ width: '16.66%' }}>Device</th>
-                                <th style={{ width: '16.66%' }}>Discovery</th>
-                                <th style={{ width: '16.66%' }}>Result</th>
-                                <th style={{ width: '16.66%' }}>Log</th>
+                                <th style={{ width: '16.66%', textAlign: 'center' }}>Date</th>
+                                <th style={{ width: '16.66%', textAlign: 'center' }}>Action</th>
+                                <th style={{ width: '16.66%', textAlign: 'center' }}>Device</th>
+                                <th style={{ width: '16.66%', textAlign: 'center' }}>Discovery</th>
+                                <th style={{ width: '16.66%', textAlign: 'center' }}>Result</th>
+                                <th style={{ width: '16.66%', textAlign: 'center' }}>Log</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -211,11 +216,10 @@ function Logs() {
                                 ))
                             )}
                         </tbody>
-                    </table>
-                    </Card>
+                    </Table>
                 </TabPanel>
             </Tabs>
-        </div>
+        </Box>
     );
 }
 
