@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import FormControl from '@mui/joy/FormControl';
 import RadioGroup from '@mui/joy/RadioGroup';
-import {Alert, Button, Checkbox, Input, List, ListItem, ListItemDecorator, Option, Select, Textarea} from "@mui/joy";
+import {Alert, Button, Card, CardContent, Checkbox, Input, List, ListItem, ListItemDecorator, Option, Select, Typography} from "@mui/joy";
 import {Troubleshoot} from "@mui/icons-material";
 import FormLabel from "@mui/joy/FormLabel";
 import {useDispatch, useSelector} from "react-redux";
@@ -10,6 +10,11 @@ import {ACTION_URL, getActionURL} from "../../redux/types/Types";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffectOnce} from "react-use";
 import {getDevices} from "../../redux/actions/Actions";
+import Box from "@mui/material/Box";
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs/components/prism-core';
+import 'prismjs/components/prism-bash';
+import 'prismjs/themes/prism.css';
 
 async function sendRequest(sendFunction, url, data) {
     return (await sendFunction(url, data, {headers: {'Content-Type': 'application/json'}})).status === 200;
@@ -21,6 +26,10 @@ async function sendAction(id, data) {
         id == null ? ACTION_URL : getActionURL(id),
         data
     );
+}
+
+async function deleteAction(id) {
+    return (await axios.delete(getActionURL(id), {headers: {'Content-Type': 'application/json'}})).status === 200;
 }
 
 function ManageAction() {
@@ -49,10 +58,27 @@ function ManageAction() {
     const navigate = useNavigate();
 
     return (
-        <div>
-            <h2 className={"d-inline"}>Devices -> {params.id ? `Edit action ${state.titleValue}` : "New action"}</h2>
-            <div className={"card my-3"}>
-                <div className={"card-body"}>
+        <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography level="h2">Devices -> {params.id ? `Edit action ${state.titleValue}` : "New action"}</Typography>
+                {params.id && (
+                    <Button
+                        variant="solid"
+                        color="danger"
+                        onClick={async () => {
+                            if (!window.confirm("Are you sure you want to delete this action?")) {
+                                return;
+                            }
+                            await deleteAction(params.id);
+                            navigate('/devices');
+                        }}
+                    >
+                        Delete
+                    </Button>
+                )}
+            </Box>
+            <Card sx={{ my: 3 }}>
+                <CardContent>
                     <form onSubmit={async (e) => {
                         if (e.target.checkValidity()) {
                             e.preventDefault();
@@ -63,7 +89,7 @@ function ManageAction() {
                                 "device_id": state.deviceValue,
                                 "cmd": state.scriptValue
                             });
-                            navigate(`/devices/${state.deviceValue}`)
+                            navigate(-1);
                         }
                     }}>
                         <FormControl>
@@ -112,22 +138,34 @@ function ManageAction() {
                             </RadioGroup>
                         </FormControl>
                         <FormLabel>Action script</FormLabel>
-                        <Alert className={"mb-1"}>
+                        <Alert sx={{ mb: 1 }}>
                             The following variables are available: <strong>%url, %ip, %prompt (input will be requested on execution)</strong>
                         </Alert>
                         <FormControl>
-                            <Textarea required minRows={5} value={state.scriptValue}
-                                      onChange={e => pushToState({scriptValue: e.target.value})}
-                                      placeholder="Enter a shell command" size="lg" variant="outlined"/>
+                            <Editor
+                                value={state.scriptValue || '#!/bin/bash\n'}
+                                onValueChange={code => pushToState({scriptValue: code})}
+                                highlight={code => highlight(code, languages.bash, 'bash')}
+                                padding={10}
+                                style={{
+                                    fontFamily: "monospace",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "4px",
+                                    minHeight: "150px",
+                                    resize: "vertical",
+                                    overflow: "auto"
+                                }}
+                            />
                         </FormControl>
                         <FormControl>
-                            <Button type="submit"
-                                    className={"float-end mt-3"}>{params.id ? "Update" : "Create"}</Button>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                <Button type="submit">{params.id ? "Update" : "Create"}</Button>
+                            </Box>
                         </FormControl>
                     </form>
-                </div>
-            </div>
-        </div>
+                </CardContent>
+            </Card>
+        </Box>
     );
 }
 

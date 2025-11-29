@@ -7,7 +7,10 @@ from util import get_attr_by_path, get_project_dir
 from entities.item import Item
 
 
-def search(api_key: str, query: str, tag_attributes: List[str]) -> list[Item]:
+def search(query: str, config: dict) -> List[Item]:
+    api_key = config.get('api_key')
+    tag_attributes: List[str] = config.get('tag_attributes', [])
+
     zm = ZoomEye(api_key=api_key)
     results = zm.search(query, fields='ip, port, domain, update_time, province.name, city.name, rdns, hostname')
 

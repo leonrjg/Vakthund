@@ -1,5 +1,5 @@
 import { Inject, Service } from 'typedi';
-import { exec, ChildProcess } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import express from 'express';
 import { ExecutionRepository } from '../repository/execution';
 
@@ -54,16 +54,27 @@ export class CommandExecutor {
 
     let result = '';
 
-    // Echo command being run
-    result += this.echo(response, `> ${command}`);
+    // Echo command being run if not a HEREDOC
+    if (!command.includes('HEREDOC')) {
+      result += this.echo(response, `> ${command}`);
+    }
 
-    const childProcess = exec(command, { windowsHide: true });
+    // Use spawn with shell to maintain command compatibility (pipes, redirects, etc.)
+    // Set PYTHONUNBUFFERED to enable real-time output from Python scripts
+    const childProcess = spawn(command, {
+      shell: true,
+      windowsHide: true,
+      env: {
+        ...process.env,
+        PYTHONUNBUFFERED: '1',
+      },
+    });
 
-    childProcess.stdout?.on('data', (data: string) => {
+    childProcess.stdout?.on('data', (data: Buffer) => {
       result += this.echo(response, data.toString().trim());
     });
 
-    childProcess.stderr?.on('data', (data: string) => {
+    childProcess.stderr?.on('data', (data: Buffer) => {
       result += this.echo(response, data.toString().trim());
     });
 

@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import FormControl from '@mui/joy/FormControl';
-import {Button, Input, Option, Select} from "@mui/joy";
+import {Button, Card, CardContent, Input, Option, Select, Typography} from "@mui/joy";
 import axios from "axios";
 import {DEVICE_URL, DISCOVERY_URL, getDeviceURL, getDiscoveryURL} from "../../redux/types/Types";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffectOnce} from "react-use";
 import {getDevices, getDiscoveryDetail} from "../../redux/actions/Actions";
 import {useDispatch, useSelector} from "react-redux";
+import Box from "@mui/material/Box";
 
 
 async function sendRequest(sendFunction, url, data) {
@@ -47,10 +48,10 @@ function ManageDiscovery() {
     const devices = useSelector((state) => state.devices);
 
     return (
-        <div>
-            <h2 className={"d-inline"}>Discoveries -> {params.id ? `Edit discovery ${state.nameValue}` : "New manual discovery"}</h2>
-            <div className={"card shadow my-3"}>
-                <div className={"card-body"}>
+        <Box>
+            <Typography level="h2">Discoveries -> {params.id ? `Edit discovery ${state.nameValue}` : "New manual discovery"}</Typography>
+            <Card sx={{ my: 3, boxShadow: 1 }}>
+                <CardContent>
                     <form onSubmit={async (e) => {
                         if (e.target.checkValidity()) {
                             e.preventDefault();
@@ -93,13 +94,14 @@ function ManageDiscovery() {
                                    sx={{mb: 2}}/>
                         </FormControl>
                         <FormControl>
-                            <Button type="submit"
-                                    className={"float-end mt-3"}>{params.id ? "Update" : "Create"}</Button>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                <Button type="submit">{params.id ? "Update" : "Create"}</Button>
+                            </Box>
                         </FormControl>
                     </form>
-                </div>
-            </div>
-        </div>
+                </CardContent>
+            </Card>
+        </Box>
     );
 }
 

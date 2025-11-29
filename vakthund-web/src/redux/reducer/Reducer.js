@@ -1,4 +1,4 @@
-import {ALL_DISCOVERIES, DEVICE_ALL, DISCOVERY_DETAIL, SETTINGS, SYSTEM_LOGS, ACTION_LOGS, SCAN_STATUS} from "../types/Types";
+import {ALL_DISCOVERIES, DEVICE_ALL, DISCOVERY_DETAIL, DISCOVERY_UPDATE, SETTINGS, SYSTEM_LOGS, ACTION_LOGS, SCAN_STATUS, ACTIONS_ALL} from "../types/Types";
 
 const initialValue = {};
 
@@ -14,10 +14,28 @@ export const devicesReducer = (state = initialValue, action) => {
                 ...state,
                 discovery: action.discovery,
             };
+        case DISCOVERY_UPDATE:
+            // Update both the current discovery details and the discovery in the list
+            const updatedDiscoveries = state.discoveries?.map(d =>
+                d.id === action.discovery.id ? action.discovery : d
+            );
+            return {
+                ...state,
+                discovery: {
+                    ...state.discovery,
+                    details: action.discovery,
+                },
+                discoveries: updatedDiscoveries || state.discoveries,
+            };
         case DEVICE_ALL:
             return {
                 ...state,
                 devices: action.devices,
+            }
+        case ACTIONS_ALL:
+            return {
+                ...state,
+                actions: action.actions,
             }
         case SETTINGS:
             return {
