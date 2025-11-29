@@ -131,7 +131,7 @@ function View() {
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={12} md={3} sx={{ height: '500px' }}>
+            <Grid item xs={12} md={3} sx={{ height: '500px', overflowY: 'auto' }}>
                 <Card variant="soft" color="neutral" sx={{ height: '100%', overflow: 'auto' }}>
                     <FormLabel>IP</FormLabel>
                     {editingIp ? (
@@ -250,8 +250,8 @@ function View() {
                     <Typography sx={{ whiteSpace: 'pre-line' }}>{actionOutput}</Typography>
                 </Card>
             </Grid>
-            <Grid item xs={12} md={3} sx={{ display: 'flex', height: '500px' }}>
-                <Card variant="soft" color="neutral" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <Grid item xs={12} md={3} sx={{ display: 'flex', height: '500px', overflowX: 'clip' }}>
+                <Card variant="soft" color="neutral" sx={{ display: 'flex', flexDirection: 'column', width: '100%', overflowX: 'clip' }}>
                     <FormLabel>Full info</FormLabel>
                     <Box sx={{ overflow: 'auto', flex: 1 }}>
                         <Editor
@@ -259,13 +259,13 @@ function View() {
                             onValueChange={() => {}}
                             highlight={code => highlight(code, languages.json)}
                             padding={10}
-                            style={{pointerEvents: "none", fontFamily: "monospace"}}
+                            style={{pointerEvents: "none", fontFamily: "monospace", fontSize: "x-small"}}
                         />
                     </Box>
                 </Card>
             </Grid>
-            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', bgcolor: 'neutral.50', mt: 3 }}>
-                    <Table sx={{ textAlign: 'center', mt: 3 }} borderAxis="both" hoverRow>
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', bgcolor: 'neutral.50', marginTop: '3px' }}>
+                    <Table sx={{ textAlign: 'center' }} borderAxis="both" hoverRow>
                         <thead>
                         <tr>
                             <th colSpan={4} style={{fontWeight: 100, lineHeight: '10px', textAlign: 'center'}}>EXECUTION LOGS</th>
