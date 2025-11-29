@@ -11,7 +11,6 @@ import {getSettings} from "../../../redux/actions/Actions";
 import {useEffectOnce} from "react-use";
 
 export function GetSearchEngineRadio(onChangeRadioCallback, defaultEngine, settings) {
-    console.log(settings);
     let engines = Object.keys(settings?.scan.engines);
     return (
         <>
