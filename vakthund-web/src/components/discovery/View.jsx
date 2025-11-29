@@ -131,7 +131,7 @@ function View() {
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={12} md={3} sx={{ height: '500px', overflowY: 'auto' }}>
+            <Grid item xs={12} md={3} sx={{ height: '500px', overflowY: 'clip' }}>
                 <Card variant="soft" color="neutral" sx={{ height: '100%', overflow: 'auto' }}>
                     <FormLabel>IP</FormLabel>
                     {editingIp ? (
