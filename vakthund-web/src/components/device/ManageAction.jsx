@@ -89,7 +89,7 @@ function ManageAction() {
                                 "device_id": state.deviceValue,
                                 "cmd": state.scriptValue
                             });
-                            navigate(`/devices/${state.deviceValue}`)
+                            navigate(-1);
                         }
                     }}>
                         <FormControl>
