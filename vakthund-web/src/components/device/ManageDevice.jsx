@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Sheet from '@mui/joy/Sheet';
@@ -8,7 +8,7 @@ import {DEVICE_URL, getDeviceURL} from "../../redux/types/Types";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {GetSearchEngineRadio} from "./utils/SearchEngineRadio";
 import {useEffectOnce} from "react-use";
-import {getDevices, getSettings} from "../../redux/actions/Actions";
+import {getSettings} from "../../redux/actions/Actions";
 import {Close} from "@mui/icons-material";
 import {useDispatch, useSelector} from "react-redux";
 import Box from "@mui/material/Box";

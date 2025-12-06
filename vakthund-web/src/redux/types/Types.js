@@ -39,6 +39,7 @@ export function getActionURL(id) {
 
 export const DEVICE_ALL_URL = DEVICE_URL + `/all`;
 export const SETTINGS_URL = `${BACKEND_URL_PREFIX}/api/settings`;
+export const NEXT_SCAN_URL = `${SETTINGS_URL}/next-scan`;
 export const ACTION_URL = `${BACKEND_URL_PREFIX}/api/device/action`;
 export const ACTION_ALL_URL = ACTION_URL + `/all`;
 

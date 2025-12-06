@@ -18,7 +18,7 @@ class PingButton extends React.Component {
     constructor(props) {
         super(props)
         this.props = props;
-        this.state = {pingText: <MonitorHeart />, success: null, pinging: false}
+        this.state = {pingText: <MonitorHeart fontSize="medium" />, success: null, pinging: false}
     }
 
     render() {

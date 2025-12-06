@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { getSystemLogs, getActionLogs } from "../redux/actions/Actions";
 import { Button, Card, Chip, Tab, TabList, TabPanel, Tabs, Table, Typography } from "@mui/joy";
-import { SCAN_RUN_URL } from "../redux/types/Types";
+import { SCAN_RUN_URL, NEXT_SCAN_URL } from "../redux/types/Types";
 import Box from "@mui/material/Box";
+import OutputCard from "./OutputCard";
 
 function Logs() {
     const dispatch = useDispatch();
@@ -12,6 +13,7 @@ function Logs() {
     const [activeTab, setActiveTab] = useState(0);
     const [scanOutput, setScanOutput] = useState("");
     const [isScanning, setIsScanning] = useState(false);
+    const [nextScanDate, setNextScanDate] = useState(null);
 
     const systemLogs = useSelector((state) => state.systemLogs) || [];
     const actionLogs = useSelector((state) => state.actionLogs) || [];
@@ -26,7 +28,18 @@ function Logs() {
     useEffect(() => {
         dispatch(getSystemLogs());
         dispatch(getActionLogs());
+        fetchNextScanDate();
     }, []);
+
+    const fetchNextScanDate = async () => {
+        try {
+            const response = await fetch(NEXT_SCAN_URL);
+            const data = await response.json();
+            setNextScanDate(data.nextRun);
+        } catch (error) {
+            console.error('Failed to fetch next scan date:', error);
+        }
+    };
 
     const runScan = async () => {
         if (isScanning) return;
@@ -75,13 +88,15 @@ function Logs() {
             setScanOutput(prev => prev + `\nError: ${error.message}`);
         } finally {
             setIsScanning(false);
-            // Refresh logs after scan completes
+            // Refresh logs and next scan date after scan completes
             dispatch(getSystemLogs());
+            fetchNextScanDate();
         }
     };
 
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleString();
+        let date = new Date(dateString);
+        return `${date.toDateString()}, ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
     };
 
     const getStatusChip = (execution) => {
@@ -96,7 +111,14 @@ function Logs() {
     return (
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography level="h2" sx={{ m: 0 }}>Logs</Typography>
+                <Box>
+                    <Typography level="h2" sx={{ m: 0 }}>Logs</Typography>
+                    {nextScanDate && (
+                        <Typography level="body-sm" sx={{ mt: 0.5, color: 'text.secondary' }}>
+                            Next scheduled scan: {formatDate(nextScanDate)}
+                        </Typography>
+                    )}
+                </Box>
                 <Button
                     color="success"
                     onClick={runScan}
@@ -115,18 +137,10 @@ function Logs() {
                 <TabPanel value={0}>
                     {/* Live scan output panel */}
                     {(isScanning || scanOutput) && (
-                        <Card variant="solid" color="neutral" sx={{
-                            color: 'rgba(255,255,255,0.5)',
-                            mb: 3,
-                            overflow: 'auto',
-                            display: 'flex',
-                            flexDirection: 'column-reverse',
-                            maxHeight: '300px'
-                        }}>
-                            <Typography sx={{ whiteSpace: 'pre-line', m: 0, fontFamily: 'monospace' }}>
-                                {scanOutput || "Starting scan..."}
-                            </Typography>
-                        </Card>
+                        <OutputCard
+                            output={scanOutput || "Starting scan..."}
+                            sx={{ mb: 3, maxHeight: '300px' }}
+                        />
                     )}
 
                     {/* System logs table */}

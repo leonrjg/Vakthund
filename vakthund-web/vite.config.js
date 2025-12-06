@@ -8,6 +8,9 @@ export default defineConfig({
     server: {
         port: 18000,
     },
+    preview: {
+        port: 18000,
+    },
     build: {
         rollupOptions: {
             onwarn(warning, warn) {

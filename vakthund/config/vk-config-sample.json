@@ -1,4 +1,7 @@
 {
+  "preferences": {
+    "timezone": "Etc/UTC"
+  },
   "scan": {
     "schedule": "0 */12 * * *",
     "engines": {

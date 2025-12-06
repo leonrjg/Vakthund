@@ -16,11 +16,14 @@ export class BaseRepository {
   getConnection = () => {
     if (!this.conn) {
       if (!env.db_type || env.db_type === 'sqlite') {
-        let dbDir = path.resolve(__dirname, '../../../data');
+        let dbDir = path.resolve(__dirname, '../../../../data');
         mkdirSync(dbDir, { recursive: true });
+        let dbPath = path.join(dbDir, 'vakthund.db');
+        console.log("Loading SQLite DB from", dbPath);
         this.conn = new Sequelize({
           dialect: 'sqlite',
-          storage: path.join(dbDir, 'vakthund.db'),
+          storage: dbPath,
+          logging: false
         });
       } else {
         this.conn = new Sequelize(env.db_name!, env.db_user!, env.db_password!, {
@@ -29,6 +32,7 @@ export class BaseRepository {
           define: {
             underscored: true,
           },
+          logging: false
         });
       }
 

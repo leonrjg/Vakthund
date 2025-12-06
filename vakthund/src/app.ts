@@ -10,7 +10,11 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(morgan('dev'));
+app.use(morgan('dev', {
+    skip: function (req, res) {
+        return req.method == 'HEAD';
+    }
+}));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());

@@ -18,12 +18,15 @@ CONFIG_FILE = f'{CONFIG_DIR}/vk-config.json'
 
 def insert(items: List[Item], device_id: int) -> None:
     for count, r in enumerate(items):
-        existing_discovery = Discovery.get_or_none(Discovery.ip == r.ip)
+        record = Discovery.get_or_none(Discovery.ip == r.ip)
 
         try:
-            status = "Updating" if existing_discovery else "Inserting"
+            status = "Updating" if record else "Inserting"
             print(f"{status} discovery ({r.url})")
-            tags = ','.join([str(t) for t in r.tags if t]) if r.tags else ''
+
+            tag_list = (r.tags or []) + (record.tags.split(',') if record else [])
+            tags = ','.join(set(str(t) for t in tag_list if t)) if tag_list else ''
+
             new_discovery = Discovery.insert(url=r.url,
                                              ip=r.ip,
                                              device_id=device_id,
@@ -32,13 +35,13 @@ def insert(items: List[Item], device_id: int) -> None:
                                              source=r.source,
                                              last_updated=datetime.now()) \
                 .on_conflict(conflict_target={Discovery.ip} if db_type != 'mysql' else None,
-                             update={Discovery.url: r.url, Discovery.device_id: device_id, Discovery.tags: tags,
+                             update={Discovery.device_id: device_id, Discovery.tags: tags,
                                      Discovery.full_data: r.full_data, Discovery.source: r.source}).execute()
         except Exception:
             traceback.print_exc()
             continue
 
-        if not existing_discovery:
+        if not record:
             device_actions = Action.select().where(((Action.device_id.is_null(True)) | (Action.device_id == device_id)) & (Action.execute_on_discovery == True))
             for action in device_actions:
                 try:
