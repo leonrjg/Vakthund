@@ -7,7 +7,7 @@ export class SettingsService {
 
   configSample = path.join(__dirname, '../../../config/vk-config-sample.json');
 
-  config = path.join(__dirname, '../../../../data/vk-config.json');
+  config = path.join(__dirname, '../../../data/vk-config.json');
 
   private deepMerge(target: any, source: any): any {
     const result = { ...target };

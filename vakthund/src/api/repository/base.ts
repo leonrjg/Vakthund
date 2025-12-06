@@ -16,7 +16,7 @@ export class BaseRepository {
   getConnection = () => {
     if (!this.conn) {
       if (!env.db_type || env.db_type === 'sqlite') {
-        let dbDir = path.resolve(__dirname, '../../../../data');
+        let dbDir = path.resolve(__dirname, '../../../data');
         mkdirSync(dbDir, { recursive: true });
         let dbPath = path.join(dbDir, 'vakthund.db');
         console.log("Loading SQLite DB from", dbPath);
