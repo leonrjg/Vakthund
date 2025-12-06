@@ -44,11 +44,7 @@ function Settings() {
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography level="h2">Settings</Typography>
-                <Button
-                    color="success"
-                    startDecorator={<PlayArrow />}
-                    onClick={() => navigate("/logs?scan=true")}
-                >
+                <Button color="success" onClick={() => navigate("/logs?scan=true")}>
                     Run Scan
                 </Button>
             </Box>
