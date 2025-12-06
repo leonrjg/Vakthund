@@ -3,6 +3,15 @@ import { QueryInterface, DataTypes } from 'sequelize';
 export const up = async (queryInterface: QueryInterface) => {
   const dialect = queryInterface.sequelize.getDialect();
 
+  if (!(await queryInterface.tableExists('vakthund_executions'))) {
+    return;
+  }
+
+  const tableInfo = await queryInterface.describeTable('vakthund_executions');
+  if (tableInfo['type'] && tableInfo['status']) {
+    return;
+  }
+
   if (dialect === 'sqlite') {
     // SQLite requires table recreation to change column constraints
     // We'll create a new table with the correct schema and migrate data
@@ -30,9 +39,6 @@ export const up = async (queryInterface: QueryInterface) => {
     await queryInterface.sequelize.query(`DROP TABLE vakthund_executions;`);
     await queryInterface.sequelize.query(`ALTER TABLE vakthund_executions_new RENAME TO vakthund_executions;`);
   } else {
-    // MySQL/PostgreSQL can alter columns directly
-    const tableInfo = await queryInterface.describeTable('vakthund_executions');
-
     if (!tableInfo['type']) {
       await queryInterface.addColumn('vakthund_executions', 'type', {
         type: DataTypes.STRING,
