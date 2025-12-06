@@ -56,7 +56,7 @@ export class CommandExecutor {
 
     // Echo command being run if not a HEREDOC
     if (!command.includes('HEREDOC')) {
-      result += this.echo(response, `> ${command}`);
+      result += this.echo(response, `$ ${command} \n`);
     }
 
     // Use spawn with shell to maintain command compatibility (pipes, redirects, etc.)

@@ -9,6 +9,7 @@ import {Button, ButtonGroup, Chip, Input} from "@mui/joy";
 import Grid from "@mui/material/Grid";
 import {Clear, InfoOutlined} from "@mui/icons-material";
 import Box from "@mui/material/Box";
+import {getFriendlyDate} from "../../DateUtils";
 
 const Table = ({lst}) => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '72vh', marginBottom: '8vh' }), []);
@@ -16,19 +17,27 @@ const Table = ({lst}) => {
 
     const gridRef = useRef();
 
-    const [rowData, setRowData] = useState(lst);
+    const [rowData] = useState(lst);
 
-    const [colDefs, setColDefs] = useState([
+    const [colDefs] = useState([
         {
             field: "last_updated",
             sort: "desc",
             minWidth: 150,
             flex: 2,
             wrapText: false,
-            autoHeight: false
+            autoHeight: false,
+            headerName: "Date Added",
+            cellRenderer: params => {
+                return getFriendlyDate(params.data.last_updated)
+            },
+            tooltipValueGetter: params => {
+                return params.data.last_updated
+            }
         },
         {
             field: "url",
+            headerName: "URL",
             minWidth: 150,
             flex: 3,
             wrapText: false,
@@ -38,7 +47,7 @@ const Table = ({lst}) => {
             field: "Device.name",
             cellRenderer: params => {
                 return <Link to={`/?query=${params.data.Device?.name}`}>
-                    <Chip color={"primary"}>{params.data.Device?.name}</Chip>
+                    <Chip color="primary">{params.data.Device?.name}</Chip>
                 </Link>
             },
             minWidth: 120,
@@ -50,7 +59,7 @@ const Table = ({lst}) => {
             field: "tags",
             minWidth: 200,
             cellRenderer: params => {
-                return params.data.tags?.split(",").map(tag => <Link to={`/?query=${tag}`}><Chip color={"neutral"} sx={{ mr: 1 }}>{tag}</Chip></Link>)
+                return params.data.tags?.split(",").filter(t => !!t).map(tag => <Link to={`/?query=${tag}`}><Chip color={"neutral"} sx={{ mr: 1 }}>{tag}</Chip></Link>)
             },
             flex: 3,
             wrapText: false,
@@ -63,7 +72,9 @@ const Table = ({lst}) => {
                     <Box sx={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', height: '100%' }}>
                         <ButtonGroup variant="soft" size="sm" sx={{ '& > a': { display: 'contents' }, '& button': { height: '100%', border: '1px solid', borderColor: 'neutral.300' } }}>
                             <Link to={`/discovery/${params.data.id}`} style={{ display: 'contents' }}>
-                                <Button size="sm" color="neutral"><InfoOutlined /></Button>
+                                <Button size="sm" color="neutral">
+                                    <InfoOutlined fontSize="medium" />
+                                </Button>
                             </Link>
                             <PingButton url={params.data.url}/>
                         </ButtonGroup>
@@ -114,7 +125,7 @@ const Table = ({lst}) => {
         <Box sx={containerStyle}>
             <Box sx={{ mb: 1 }}>
                 <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-                    <Grid item md={9}>
+                    <Grid item md={10}>
                         <Input size="md" sx={{ width: '100%' }}
                                id="filter-text-box"
                                autoComplete="off"
@@ -125,9 +136,9 @@ const Table = ({lst}) => {
                                }}></Button>}
                         />
                     </Grid>
-                    <Grid item md={3}>
+                    <Grid item md={2}>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Link to="/discovery/new"><Button variant="solid">+ Add manual discovery</Button></Link>
+                            <Link to="/discovery/new" style={{width: '100%'}}><Button variant="solid" fullWidth={true}>+ Add manual discovery</Button></Link>
                         </Box>
                     </Grid>
                 </Grid>

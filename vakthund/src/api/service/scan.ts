@@ -4,13 +4,19 @@ import express from 'express';
 import { ExecutionRepository } from '../repository/execution';
 import { CommandExecutor } from './command-executor';
 
-const ENGINE_PATH = process.env.ENGINE_PATH || '/app/engine/main.py';
+import fs from 'fs';
 
 @Service()
 export class ScanService {
   static getScanCommand(): string {
-    return `python3 ${ENGINE_PATH}`;
+    const containerizedPath = '/app/engine/main.py';
+    let enginePath = containerizedPath;
+    if (!fs.existsSync(containerizedPath)) {
+      enginePath = '../vakthund-engine/main.py';
+    }
+    return process.env.ENGINE_CMD ?? `python3 ${enginePath}`;
   }
+
   private executionRepo: ExecutionRepository;
 
   private commandExecutor: CommandExecutor;
@@ -39,8 +45,6 @@ export class ScanService {
     if (this.isRunning()) {
       throw new Error('A scan is already running');
     }
-
-    this.echo(res, '> Starting scan...');
 
     const { executionId, childProcess } = await this.commandExecutor.execute({
       command: ScanService.getScanCommand(),

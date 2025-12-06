@@ -13,7 +13,13 @@ import {PlayArrow} from "@mui/icons-material";
 import Box from "@mui/material/Box";
 
 async function postSettings(data) {
-    return (await axios.post(SETTINGS_URL, data, {headers: {'Content-Type': 'application/json'}})).status === 200;
+    return await axios.post(SETTINGS_URL, data, {headers: {'Content-Type': 'application/json'}})
+        .then((response) => {
+            return response.status === 200;
+        })
+        .catch((_) => {
+            return false;
+        });
 }
 
 function Settings() {
@@ -21,7 +27,7 @@ function Settings() {
         return state.settings;
     });
     const [settingsJson, setSettingsJson] = useState(JSON.stringify(data || {}, null, 2));
-    let [isSubmitted, setSubmitted] = useState(false);
+    let [isSubmitted, setSubmitted] = useState(null);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -48,8 +54,9 @@ function Settings() {
             </Box>
             <Card sx={{ my: 3, boxShadow: 1 }}>
                 <CardContent>
-                    {isSubmitted &&
-                        <Alert color="success" variant="soft" sx={{ mb: 1 }}>Saved settings</Alert>}
+                    { isSubmitted !== null &&
+                        <Alert color={isSubmitted ? "success" : "danger"} variant="soft" sx={{mb: 1}}>{isSubmitted ? "Saved settings" : "Invalid settings"}</Alert>
+                    }
                     <Editor
                         value={settingsJson}
                         onValueChange={setSettingsJson}
@@ -58,7 +65,8 @@ function Settings() {
                         style={{fontFamily: "monospace", border: "1px solid #ccc", borderRadius: "4px", minHeight: "200px"}}
                     />
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-                        <Button onClick={async () => {
+                        <Button fullWidth={true} onClick={async () => {
+                            window.scrollTo(0,0);
                             setSubmitted(await postSettings(settingsJson))
                             dispatch(getSettings());
                         }}>Update</Button>
