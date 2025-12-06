@@ -22,7 +22,7 @@ describe('SettingsService', () => {
   let service: SettingsService;
 
   const configSamplePath = path.join(__dirname, '../../../config/vk-config-sample.json');
-  const configPath = path.join(__dirname, '../../../data/vk-config.json');
+  const configPath = path.join(__dirname, '../../../../data/vk-config.json');
 
   beforeEach(() => {
     service = new SettingsService();
