@@ -3,6 +3,10 @@ import { QueryInterface, DataTypes } from 'sequelize';
 export const up = async (queryInterface: QueryInterface) => {
   const dialect = queryInterface.sequelize.getDialect();
 
+  if (!(await queryInterface.tableExists('vakthund_executions'))) {
+    return;
+  }
+
   const tableInfo = await queryInterface.describeTable('vakthund_executions');
   if (tableInfo['type'] && tableInfo['status']) {
     return;
