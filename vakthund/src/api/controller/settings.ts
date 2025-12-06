@@ -14,9 +14,13 @@ router.get<{}, any>('', async (req, res) => {
 
 router.post<{}, any>('', async (req, res) => {
   const result = await settingsService.writeSettings(req.body);
-  // Refresh scheduler in case scan_interval_in_minutes changed
-  await schedulerService.refreshSchedule();
+  await schedulerService.initialize();
   res.json(result);
+});
+
+router.get<{}, any>('/next-scan', async (req, res) => {
+  const nextRun = schedulerService.getNextRun();
+  res.json({ nextRun: nextRun?.toISOString() || null });
 });
 
 export default router;

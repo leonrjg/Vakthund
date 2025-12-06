@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllDiscoveries, getDiscoveryDetail, updateDiscoveryTags, updateDiscoveryField} from "../../redux/actions/Actions";
-import {Button, Card, Chip, ChipDelete, IconButton, Input, Option, Select, Table, Typography} from "@mui/joy";
+import {Button, Card, Chip, ChipDelete, IconButton, Input, Option, Select, Table} from "@mui/joy";
 import Grid from "@mui/material/Grid";
 import FormLabel from "@mui/joy/FormLabel";
 import {Add, CallToActionOutlined, Close, Delete} from "@mui/icons-material";
@@ -14,6 +14,7 @@ import {getActionExecuteURL, getDiscoveryURL} from "../../redux/types/Types";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import PingButton from "../PingButton";
+import OutputCard from "../OutputCard";
 
 async function deleteDiscovery(id) {
     return (await axios.delete(getDiscoveryURL(id), {headers: {'Content-Type': 'application/json'}})).status === 200;
@@ -39,7 +40,7 @@ function View() {
         let actionUrl = getActionExecuteURL(params.id, value);
         if (action.has_prompt) {
             const promptPosition = action.cmd.indexOf("%prompt");
-            let prompt = window.prompt("Enter input for ... " + action.cmd.substring(promptPosition - 10, promptPosition + 10) + " ...");
+            let prompt = window.prompt("Enter input for ... " + action.cmd.substring(promptPosition - 15, promptPosition + 15) + " ...");
             if (!prompt) {
                 return;
             }
@@ -82,11 +83,8 @@ function View() {
     };
 
     const handleRemoveTag = (tagToRemove) => {
-        console.log("Removing tag:", tagToRemove);
         const currentTags = selector.details?.tags ? selector.details.tags.split(",").map(t => t.trim()).filter(t => t) : [];
-        console.log("Current tags:", currentTags);
         const updatedTags = currentTags.filter(tag => tag !== tagToRemove).join(",");
-        console.log("Updated tags:", updatedTags);
         dispatch(updateDiscoveryTags(params.id, updatedTags));
     };
 
@@ -155,7 +153,7 @@ function View() {
                             {selector.details?.ip || <em>Click to add IP</em>}
                         </Box>
                     )}
-                    <FormLabel>URL <PingButton url={selector.details?.url} sx={{ height: '100%', verticalAlign: 'bottom' }}/></FormLabel>
+                    <FormLabel>URL <PingButton url={selector.details?.url} sx={{ height: '100%', verticalAlign: 'bottom', ml: 0.3, padding: 0.7 }}/></FormLabel>
                     {editingUrl ? (
                         <Input
                             size="sm"
@@ -240,15 +238,7 @@ function View() {
                                 <Option value={action.id}>{action.title}</Option>
                             ))}
                 </Select>
-                <Card variant="solid" color="neutral" sx={{
-                    height: '100%',
-                    color: 'rgba(255,255,255,0.5)',
-                    overflow: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column-reverse'
-                }}>
-                    <Typography sx={{ whiteSpace: 'pre-line' }}>{actionOutput}</Typography>
-                </Card>
+                <OutputCard output={actionOutput} />
             </Grid>
             <Grid item xs={12} md={3} sx={{ display: 'flex', height: '500px', overflowX: 'clip' }}>
                 <Card variant="soft" color="neutral" sx={{ display: 'flex', flexDirection: 'column', width: '100%', overflowX: 'clip' }}>
@@ -259,7 +249,7 @@ function View() {
                             onValueChange={() => {}}
                             highlight={code => highlight(code, languages.json)}
                             padding={10}
-                            style={{pointerEvents: "none", fontFamily: "monospace", fontSize: "x-small"}}
+                            style={{pointerEvents: "none", fontFamily: "monospace", fontSize: "small"}}
                         />
                     </Box>
                 </Card>
@@ -271,17 +261,17 @@ function View() {
                             <th colSpan={4} style={{fontWeight: 100, lineHeight: '10px', textAlign: 'center'}}>EXECUTION LOGS</th>
                         </tr>
                         <tr>
-                            <th>Date</th>
-                            <th>Action</th>
-                            <th>Result</th>
-                            <th>Log</th>
+                            <th style={{textAlign: 'center'}}>Date</th>
+                            <th style={{textAlign: 'center'}}>Action</th>
+                            <th style={{textAlign: 'center'}}>Result</th>
+                            <th style={{textAlign: 'center'}}>Log</th>
                         </tr>
                         </thead>
                         <tbody>
                         {selector.executions?.map((execution) => (
                             <tr>
                                 <td>{execution.execution_date}</td>
-                                <td>{execution.Action?.title}</td>
+                                <td>{execution.Action?.title ?? "[Deleted action]"}</td>
                                 <td>{execution.success ? <Chip color="success">SUCCESS</Chip> :
                                     <Chip color="danger">FAILED</Chip>}</td>
                                 <td><Button color={"neutral"} disabled={!execution.result} onClick={() => window.open(window.URL.createObjectURL(new Blob([execution.result], { type: "text/html;charset=utf8" })))}> View log</Button></td>

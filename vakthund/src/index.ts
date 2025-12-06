@@ -21,7 +21,11 @@ const start = async () => {
 
   // Initialize the scheduler for periodic scans
   const scheduler = Container.get(SchedulerService);
-  await scheduler.initialize();
+  try {
+    await scheduler.initialize();
+  } catch (error) {
+    console.error('Scheduler initialization failed:', error);
+  }
 
   app.listen(port, () => {
     /* eslint-disable no-console */
