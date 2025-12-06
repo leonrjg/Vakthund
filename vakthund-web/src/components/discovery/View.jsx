@@ -83,11 +83,8 @@ function View() {
     };
 
     const handleRemoveTag = (tagToRemove) => {
-        console.log("Removing tag:", tagToRemove);
         const currentTags = selector.details?.tags ? selector.details.tags.split(",").map(t => t.trim()).filter(t => t) : [];
-        console.log("Current tags:", currentTags);
         const updatedTags = currentTags.filter(tag => tag !== tagToRemove).join(",");
-        console.log("Updated tags:", updatedTags);
         dispatch(updateDiscoveryTags(params.id, updatedTags));
     };
 

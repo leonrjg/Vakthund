@@ -13,9 +13,7 @@ router.get<{}, any>('', async (req, res) => {
 });
 
 router.post<{}, any>('', async (req, res) => {
-  console.log('POST /settings received body:', JSON.stringify(req.body).substring(0, 200));
   const result = await settingsService.writeSettings(req.body);
-  console.log('writeSettings returned:', result);
   await schedulerService.initialize();
   res.json(result);
 });

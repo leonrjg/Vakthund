@@ -7,7 +7,7 @@ export class SettingsService {
 
   configSample = path.join(__dirname, '../../../config/vk-config-sample.json');
 
-  config = path.join(__dirname, '../../../data/vk-config.json');
+  config = path.join(__dirname, '../../../../data/vk-config.json');
 
   private deepMerge(target: any, source: any): any {
     const result = { ...target };
@@ -39,14 +39,9 @@ export class SettingsService {
 
   writeSettings = async (body: any) => {
     try {
-      console.log('writeSettings received timezone:', body.preferences?.timezone);
       fs.writeFileSync(this.config, JSON.stringify(body), 'utf-8');
-      console.log('Wrote settings to disk');
-      const verification = JSON.parse(fs.readFileSync(this.config, 'utf-8'));
-      console.log('Verification read timezone:', verification.preferences?.timezone);
       return true;
     } catch (error) {
-      console.error('writeSettings error:', error);
       return false;
     }
   };

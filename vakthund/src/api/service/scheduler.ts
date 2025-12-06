@@ -23,7 +23,6 @@ export class SchedulerService {
 
   async initialize(): Promise<void> {
     const settings = await this.settingsService.getSettings();
-    console.log('Scheduler.initialize() got timezone:', settings.preferences?.timezone);
     this.scheduleScans(settings);
   }
 
